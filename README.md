@@ -1,8 +1,8 @@
-# TODO:
+# TODO
 
 ## Frontend
 
-- [ ] Make it deploy - netlify
+- [x] Make it deploy - netlify
 - [ ] Add CI/CD
 - [ ] Create the home page
   - [ ] Create the hero section
