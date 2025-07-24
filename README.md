@@ -1,6 +1,10 @@
-# TODO
+# Ntheo
 
-## Frontend
+[![Netlify Status](https://api.netlify.com/api/v1/badges/69bed028-1f29-42d8-84c0-83f1a98b1c98/deploy-status)](https://app.netlify.com/projects/ntheo/deploys)
+
+## TODO
+
+### Frontend
 
 - [x] Make it deploy - netlify
 - [x] Add CI/CD

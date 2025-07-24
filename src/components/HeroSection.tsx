@@ -1,5 +1,4 @@
 import { Camera, Heart, QrCode } from "lucide-react";
-import React from "react";
 import { Button } from "./ui/button";
 
 const HeroSection = () => {
