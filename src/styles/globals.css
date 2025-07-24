@@ -47,6 +47,8 @@
   --color-burgundy: var(--burgundy);
   --color-gold: var(--gold);
   --color-burnt-orange: var(--burnt-orange);
+  --color-pink: var(--pink);
+  --color-coral: var(--coral);
 }
 
 :root {
@@ -85,6 +87,8 @@
   --burgundy: oklch(0.3306 0.1341 359.74);
   --gold: oklch(0.8238 0.1678 90.3);
   --burnt-orange: oklch(0.5675 0.1577 46.26);
+  --pink: oklch(0.7716 0.1387 9.66);
+  --coral: oklch(0.7382 0.1445 26.21);
 }
 
 .dark {
@@ -119,6 +123,11 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --burgundy: oklch(0.3306 0.1341 359.74);
+  --gold: oklch(0.8238 0.1678 90.3);
+  --burnt-orange: oklch(0.5675 0.1577 46.26);
+  --pink: oklch(0.7716 0.1387 9.66);
+  --coral: oklch(0.7382 0.1445 26.21);
 }
 
 @layer base {

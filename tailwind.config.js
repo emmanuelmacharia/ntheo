@@ -12,6 +12,8 @@ module.exports = {
         burgundy: "hsl(var( --color-burgundy))",
         gold: "hsl(var(--color-gold))",
         burntOrange: "hsl(var(--color-burnt-orange))",
+        pink: "hsl(var(--color-pink))",
+        coral: "hsl(var(--color-coral))",
       },
     },
   },

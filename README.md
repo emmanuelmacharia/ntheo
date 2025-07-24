@@ -3,7 +3,7 @@
 ## Frontend
 
 - [x] Make it deploy - netlify
-- [ ] Add CI/CD
+- [x] Add CI/CD
 - [ ] Create the home page
   - [ ] Create the hero section
   - [ ] Create the Invite section
