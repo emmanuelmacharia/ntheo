@@ -14,7 +14,14 @@ jobs:
 
             - name: Copy .env.example files
               shell: bash
-              run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
+              run: |
+                set -euo pipefail
+                while IFS= read -r file; do
+                    target="${file%.example}"
+                    if [[ ! -e "$target" ]]; then
+                    cp "$file" "$target"
+                    fi
+                done < <(git ls-files -co --exclude-standard '*.env.example')
 
             - name: Typecheck
               run: pnpm run typecheck
