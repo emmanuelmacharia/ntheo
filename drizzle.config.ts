@@ -6,11 +6,11 @@ export default {
   schema: "./src/server/db/schema.ts",
   dialect: "singlestore",
   dbCredentials: {
-    host: env.SINGLE_STORE_HOST as string,
+    host: env.SINGLE_STORE_HOST,
     port: Number(env.SINGLE_STORE_PORT) || 3306, // Default SingleStore port (same as MySQL)
-    user: env.SINGLE_STORE_USER as string,
-    password: env.SINGLE_STORE_PASSWORD as string,
-    database: env.SINGLE_STORE_DATABASE_NAME as string,
+    user: env.SINGLE_STORE_USER,
+    password: env.SINGLE_STORE_PASSWORD,
+    database: env.SINGLE_STORE_DATABASE_NAME,
     ssl: {},
   },
   tablesFilter: ["ntheo_*"],

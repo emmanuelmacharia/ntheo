@@ -5,14 +5,14 @@ import { invites_table, type DB_InviteType } from "./schema";
 import { inviteUserSchema, type Invite } from "../models";
 
 export const QUERIES = {
-  getAllInvites: async function (): Promise<DB_InviteType[] | null | Error> {
+  getAllInvites: async function (): Promise<DB_InviteType[] | [] | Error> {
     try {
       const invites = await db
         .select()
         .from(invites_table)
         .orderBy(desc(invites_table.createdAt));
 
-      return invites.length > 0 ? invites : null;
+      return invites;
     } catch (error) {
       console.error("Error fetching guest feedback:", error);
       return new Error("Failed to fetch guest feedback");
@@ -38,14 +38,11 @@ export const QUERIES = {
 
 export const MUTATIONS = {
   createGuestInvite: async function (input: Invite) {
-    console.log("Creating guest invite with input:", input);
     const parsedData = inviteUserSchema.safeParse(input);
     if (!parsedData.success) {
-      console.error("Validation failed:", parsedData.error);
       return new Error("Invalid invite data");
     }
     try {
-      console.log("Parsed invite data:", parsedData.data);
       const result = await db
         .insert(invites_table)
         .values({
@@ -62,21 +59,21 @@ export const MUTATIONS = {
     }
   },
 
-  deleteInvite: async function (input: number) {
+  deleteInvite: async function (input: number): Promise<string | Error> {
     // first find whether the record exists
     const invite = await QUERIES.getInvite(input);
     if (invite instanceof Error) {
-      return Error("Error occurred");
+      return new Error("Error occurred");
     }
     if (!invite) {
-      return Error("Invite does not exist");
+      return new Error("Invite does not exist");
     }
     try {
       await db.delete(invites_table).where(eq(invites_table.id, input));
       return `Deleted invite with ID: ${input}`;
     } catch (error) {
       console.error(error);
-      return Error(`Failed to delete invite`);
+      return new Error(`Failed to delete invite`);
     }
   },
 };

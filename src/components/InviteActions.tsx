@@ -1,33 +1,53 @@
 "use client";
 
 import { Copy, Share, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { deleteInvite } from "~/server/actions/actions";
 import { toast } from "sonner";
 
 const InviteActions = (props: { id: number }) => {
-  const [link] = useState(`${window.location.origin}/invite/${props.id}`);
+  const [link, setLink] = useState<string>("");
+
+  useEffect(() => {
+    setLink(`${window.location.origin}/invite/${props.id}`);
+  }, [props.id]);
+
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(link);
-    toast.message(`Invite link for ${props.id} copied to the clipboard`, {
-      style: { color: "#BE5103" },
-    });
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.message(`Invite link for ${props.id} copied to the clipboard`, {
+        style: { color: "#BE5103" },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
   const handleSharing = async () => {
     const text = `Moureen and Emmanuel invite you to our Ntheo ceremony. Visit ${link} to rsvp`;
-    await navigator.share({
-      title: `Ntheo ceremony`,
-      text: text,
-      url: link,
-    });
+    try {
+      await navigator.share({
+        title: `Ntheo ceremony`,
+        text: text,
+        url: link,
+      });
+    } catch (error) {
+      await handleCopy();
+    }
   };
   const handleDelete = async () => {
     // handle deletion with server action
+    // we will add the confirmation dialog after creating the page
     try {
       await deleteInvite(props.id);
+      toast.message(`Invite successfully deleted`, {
+        style: { color: "#BE5103" },
+      });
     } catch (error) {
       console.error(error);
+      toast.message(`Failed to delete invite`, {
+        style: { color: "#ED2100" },
+      });
     }
   };
   return (

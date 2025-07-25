@@ -4,7 +4,7 @@ import type { DB_InviteType } from "../db/schema";
 import { inviteUserSchema } from "../models";
 import { cookies } from "next/headers";
 
-const forceRefesh = async () => {
+const forceRefresh = async () => {
   const c = await cookies();
   c.set("force-refresh", JSON.stringify(Math.random()));
 };
@@ -29,10 +29,13 @@ export const createGuestInvite = async (inviteData: {
       console.error("Error creating guest invite:", result);
       return result;
     }
-    await forceRefesh();
+    await forceRefresh();
     return result;
   } catch (error) {
     console.error("Error creating guest invite:", error);
+    return new Error(
+      error instanceof Error ? error.message : "Unknown error occurred",
+    );
   }
 };
 
@@ -53,6 +56,6 @@ export const deleteInvite = async (id: number) => {
   if (result instanceof Error) {
     return result;
   }
-  await forceRefesh();
+  await forceRefresh();
   return result;
 };

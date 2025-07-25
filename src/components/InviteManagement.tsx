@@ -4,10 +4,16 @@ import { Users } from "lucide-react";
 import InviteForm from "./InviteForm";
 import { fetchAllInvites } from "~/server/actions/actions";
 import InviteList from "./InviteList";
+import type { DB_InviteType } from "~/server/db/schema";
 
 const InviteManagement = async () => {
-  const invites = await fetchAllInvites();
-
+  let invites: DB_InviteType[] = [];
+  try {
+    invites = await fetchAllInvites();
+  } catch (error) {
+    console.error("Failed to fetch invites:", error);
+    // Consider returning an error UI or empty state
+  }
   return (
     <div className="space-y-6">
       <Card>
