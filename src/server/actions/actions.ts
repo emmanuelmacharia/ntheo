@@ -59,3 +59,14 @@ export const deleteInvite = async (id: number) => {
   await forceRefresh();
   return result;
 };
+
+export const getInviteById = async (id: number) => {
+  const result = await QUERIES.getInvite(id);
+  if (result instanceof Error) {
+    return new Error("Error retrieving invite");
+  }
+  if (!result) {
+    return new Error("No invite found");
+  }
+  return result;
+};

@@ -23,12 +23,13 @@ export const QUERIES = {
     inviteId: number,
   ): Promise<DB_InviteType | null | Error> {
     try {
-      const [invite] = await db
+      console.log(inviteId);
+      const invite = await db
         .select()
         .from(invites_table)
-        .where(eq(invites_table.id, inviteId))
-        .execute();
-      return invite?.id ? invite : null;
+        .where(eq(invites_table.id, inviteId));
+      console.log(invite);
+      return invite[0]?.id ? invite[0] : null;
     } catch (error) {
       console.error("Error fetching invite:", error);
       return new Error("Failed to fetch invite");
