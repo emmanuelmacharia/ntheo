@@ -38,6 +38,9 @@ async function createDbConnection() {
       database: env.SINGLE_STORE_DATABASE_NAME,
       ssl: {},
       maxIdle: 0,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
     });
 
     console.log("Connection successful!");

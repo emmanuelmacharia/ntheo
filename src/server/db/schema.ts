@@ -35,7 +35,7 @@ export const user = createTable(
     lastLogin: timestamp("last_login", { mode: "date" }), //when they last logged in
   },
   (table) => ({
-    emailUnique: index("email_idx").on(table.id, table.email), // Unique index on
+    emailUnique: index("email_idx").on(table.id, table.email), // Unique index on email
   }),
 );
 
