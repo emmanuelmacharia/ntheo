@@ -31,11 +31,11 @@ async function createDbConnection() {
     console.log("Certificate loaded, length:", certContent.length);
 
     const connection = await mysql.createConnection({
-      host: env.SINGLE_STORE_HOST as string,
-      port: parseInt(env.SINGLE_STORE_PORT as string),
-      user: env.SINGLE_STORE_USER as string,
-      password: env.SINGLE_STORE_PASSWORD as string,
-      database: env.SINGLE_STORE_DATABASE_NAME as string,
+      host: env.SINGLE_STORE_HOST,
+      port: parseInt(env.SINGLE_STORE_PORT),
+      user: env.SINGLE_STORE_USER,
+      password: env.SINGLE_STORE_PASSWORD,
+      database: env.SINGLE_STORE_DATABASE_NAME,
       ssl: {},
       maxIdle: 0,
     });
