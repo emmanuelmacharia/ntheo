@@ -1,18 +1,123 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import { createPool, type Pool } from "mysql2/promise";
+// import { drizzle } from "drizzle-orm/singlestore";
+// import mysql from "mysql2/promise";
+// import fs from "fs";
 
+// import { env } from "~/env";
+// import * as schema from "./schema";
+// import path from "path";
+
+// const SSL_CERT_PATH = path.join(
+//   process.cwd(),
+//   "public",
+//   "singlestore_bundle.pem",
+// );
+
+// /**
+//  * Cache the database connection in development. This avoids creating a new connection on every HMR
+//  * update.
+//  */
+// const globalForDb = globalThis as unknown as {
+//   client: mysql.Connection | undefined;
+// };
+
+// async function createDbConnection() {
+//   console.log("Certificate path:", SSL_CERT_PATH);
+//   console.log("Certificate exists:", fs.existsSync(SSL_CERT_PATH));
+//   console.log("Current directory:", process.cwd());
+
+//   const connection = await mysql.createConnection({
+//     host: env.SINGLE_STORE_HOST as string,
+//     port: parseInt(env.SINGLE_STORE_PORT as string),
+//     user: env.SINGLE_STORE_USER as string,
+//     password: env.SINGLE_STORE_PASSWORD as string,
+//     database: env.SINGLE_STORE_DATABASE_NAME as string,
+//     ssl: {
+//       ca: fs.readFileSync(SSL_CERT_PATH),
+//       rejectUnauthorized: true,
+//     },
+//     maxIdle: 0,
+//   });
+
+//   return connection;
+// }
+
+// export const client = globalForDb.client ?? (await createDbConnection());
+
+// if (env.NODE_ENV !== "production") globalForDb.client = client;
+
+// client.addListener("error", (err) => {
+//   console.error("Database error", err);
+// });
+
+// export const db = drizzle(client, { schema });
+
+import { drizzle } from "drizzle-orm/singlestore";
+import mysql from "mysql2/promise";
+import fs from "fs";
 import { env } from "~/env";
 import * as schema from "./schema";
+import path from "path";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
+const SSL_CERT_PATH = path.join(
+  process.cwd(),
+  "public",
+  "singlestore_bundle.pem",
+);
+
 const globalForDb = globalThis as unknown as {
-  conn: Pool | undefined;
+  client: mysql.Connection | undefined;
 };
 
-const conn = globalForDb.conn ?? createPool({ uri: env.DATABASE_URL });
-if (env.NODE_ENV !== "production") globalForDb.conn = conn;
+async function createDbConnection() {
+  try {
+    // Pre-connection checks
+    console.log("=== Database Connection Attempt ===");
+    console.log("Certificate path:", SSL_CERT_PATH);
+    console.log("Certificate exists:", fs.existsSync(SSL_CERT_PATH));
+    console.log("Current directory:", process.cwd());
 
-export const db = drizzle(conn, { schema, mode: "default" });
+    if (!fs.existsSync(SSL_CERT_PATH)) {
+      throw new Error(`SSL certificate not found at ${SSL_CERT_PATH}`);
+    }
+
+    const certContent = fs.readFileSync(SSL_CERT_PATH, "utf8");
+    console.log("Certificate loaded, length:", certContent.length);
+
+    const connection = await mysql.createConnection({
+      host: env.SINGLE_STORE_HOST as string,
+      port: parseInt(env.SINGLE_STORE_PORT as string),
+      user: env.SINGLE_STORE_USER as string,
+      password: env.SINGLE_STORE_PASSWORD as string,
+      database: env.SINGLE_STORE_DATABASE_NAME as string,
+      ssl: {},
+      maxIdle: 0,
+    });
+
+    console.log("Connection successful!");
+    return connection;
+  } catch (error) {
+    console.error("=== Database Connection Error ===");
+    console.error("Error details:", error);
+    throw error;
+  }
+}
+
+// Initialize connection
+let client: mysql.Connection;
+try {
+  client = globalForDb.client ?? (await createDbConnection());
+
+  if (env.NODE_ENV !== "production") {
+    globalForDb.client = client;
+  }
+
+  client.addListener("error", (err) => {
+    console.error("Database runtime error:", err);
+  });
+} catch (error) {
+  console.error("Failed to initialize database connection:", error);
+  throw error;
+}
+
+export { client };
+export const db = drizzle(client, { schema });
