@@ -9,8 +9,9 @@
 - [x] Make it deploy - netlify
 - [x] Add CI/CD
 - [ ] Create the home page
-  - [ ] Create the hero section
-  - [ ] Create the Invite section
+  - [x] Create the hero section
+  - [x] Create the Invite form
+  - [ ] Create the list of invitees
   - [ ] Create the upload section UI (uploadthing will be integrated later)
   - [ ] Create the QR section
   - [ ] Create the gallery

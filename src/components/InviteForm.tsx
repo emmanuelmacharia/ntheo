@@ -14,11 +14,13 @@ interface Guest {
   inviteFamily: boolean;
 }
 
+type FormState = Omit<Guest, "id">;
+
 const InviteForm = () => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     name: "", // guest name
     familyName: "", // family details
-    inviteFamily: false, // whether we inbite the whole family
+    inviteFamily: false, // whether we invite the whole family
   });
   const [loading, setLoading] = useState(false);
 
@@ -74,7 +76,6 @@ const InviteForm = () => {
               <Checkbox
                 id="inviteFamily"
                 name="inviteFamily"
-                value={form.inviteFamily ? "true" : "false"}
                 checked={form.inviteFamily}
                 onCheckedChange={(checked) =>
                   setForm({ ...form, inviteFamily: checked ? true : false })
@@ -82,7 +83,12 @@ const InviteForm = () => {
               />
               <Label htmlFor="inviteFamily"> Family Invitation</Label>
             </div>
-            <Button variant="golden" type="submit" className="text-primary">
+            <Button
+              variant="golden"
+              type="submit"
+              className="text-primary hover:bg-gold/70 hover:cursor-pointer"
+              disabled={loading || !form.name.trim()}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Guest
             </Button>
