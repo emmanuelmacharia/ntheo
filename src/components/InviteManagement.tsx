@@ -5,7 +5,6 @@ import InviteForm from "./InviteForm";
 import { fetchAllInvites } from "~/server/actions/actions";
 import InviteList from "./InviteList";
 import type { DB_InviteType } from "~/server/db/schema";
-const dynamic = "force-dynamic";
 
 const InviteManagement = async () => {
   let invites: DB_InviteType[] = [];
