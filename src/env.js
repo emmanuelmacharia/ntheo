@@ -10,7 +10,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     SINGLE_STORE_USER: z.string(),
     SINGLE_STORE_PASSWORD: z.string(),
-    SINGLE_STORE_HOST: z.string(),
+    SINGLE_STORE_HOST: z.string().min(1),
     SINGLE_STORE_PORT: z.string(),
     SINGLE_STORE_DATABASE_NAME: z.string(),
     NODE_ENV: z

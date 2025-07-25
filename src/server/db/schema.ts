@@ -49,7 +49,7 @@ export const invites = createTable("invite", {
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   inviteExpiration: timestamp("invite_expiration", { mode: "date" })
-    .default(sql`'2025-08-02 23:59:59'`)
+    .default(sql`'2025-08-02 23:59:59'`) // .default(sql`DATE_ADD(NOW(), INTERVAL 30 DAY)`)
     .notNull(), // Invite expiration date, default is August 2nd from creation
   rsvp: boolean("rsvp").default(false).notNull(), // RSVP status; false means not responded
   accepted: boolean("accepted").default(false).notNull(), // Accepted status; false means not coming, true means coming
