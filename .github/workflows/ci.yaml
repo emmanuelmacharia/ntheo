@@ -1,0 +1,31 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs: 
+    build: 
+        runs-on: ubuntu-latest
+        steps: 
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Install dependencies
+              run: npm install -g pnpm && pnpm install
+
+            - name: Install dependencies
+              run: |
+                set -euo pipefail
+                while IFS= read -r file; do
+                    target="${file%.example}"
+                    if [[ ! -e "$target" ]]; then
+                    cp "$file" "$target"
+                    fi
+                done < <(git ls-files -co --exclude-standard '*.env.example')
+
+            - name: Typecheck
+              run: pnpm run typecheck
+
+            - name: Lint
+              run: pnpm run lint
+
+            

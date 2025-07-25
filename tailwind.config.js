@@ -8,10 +8,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "hsl(var(--color-primary))",
         burgundy: "hsl(var( --color-burgundy))",
-        gold: "hsl(var(--color-gold))",
         burntOrange: "hsl(var(--color-burnt-orange))",
+        coral: "hsl(var(--color-coral))",
+        gold: "hsl(var(--color-gold))",
+        pink: "hsl(var(--color-pink))",
+        primary: "hsl(var(--color-primary))",
       },
     },
   },
