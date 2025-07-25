@@ -1,15 +1,7 @@
 import { drizzle } from "drizzle-orm/singlestore";
 import mysql from "mysql2/promise";
-import fs from "fs";
 import { env } from "~/env";
 import * as schema from "./schema";
-import path from "path";
-
-const SSL_CERT_PATH = path.join(
-  process.cwd(),
-  "public",
-  "singlestore_bundle.pem",
-);
 
 const globalForDb = globalThis as unknown as {
   client: mysql.Connection | undefined;
@@ -18,17 +10,6 @@ const globalForDb = globalThis as unknown as {
 async function createDbConnection() {
   try {
     // Pre-connection checks
-    console.log("=== Database Connection Attempt ===");
-    console.log("Certificate path:", SSL_CERT_PATH);
-    console.log("Certificate exists:", fs.existsSync(SSL_CERT_PATH));
-    console.log("Current directory:", process.cwd());
-
-    if (!fs.existsSync(SSL_CERT_PATH)) {
-      throw new Error(`SSL certificate not found at ${SSL_CERT_PATH}`);
-    }
-
-    const certContent = fs.readFileSync(SSL_CERT_PATH, "utf8");
-    console.log("Certificate loaded, length:", certContent.length);
 
     const connection = await mysql.createConnection({
       host: env.SINGLE_STORE_HOST,

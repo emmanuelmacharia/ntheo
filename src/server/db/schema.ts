@@ -60,16 +60,22 @@ export const invites = createTable("invite", {
 
 // create a guest when the invite is accepted
 // and the number of guests is greater than 0
-export const guests = createTable("guest", {
-  id: bigint("id", { mode: "number", unsigned: true })
-    .primaryKey()
-    .autoincrement(),
-  inviteId: bigint("invite_id", { mode: "number", unsigned: true }).notNull(),
-  name: text("name").notNull(),
-  familyName: text("family_name"),
-  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
-});
+export const guests = createTable(
+  "guest",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .primaryKey()
+      .autoincrement(),
+    inviteId: bigint("invite_id", { mode: "number", unsigned: true }).notNull(),
+    name: text("name").notNull(),
+    familyName: text("family_name"),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => ({
+    inviteIdIdx: index("guest_invite_id_idx").on(table.inviteId),
+  }),
+);
 
 // Media table
 export const media = createTable("media", {
