@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
+import { createGuestInvite } from "~/server/actions/actions";
 
 interface Guest {
   id: string;
@@ -28,16 +29,20 @@ const InviteForm = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     console.log("Submitting form:", form);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Form submitted:", form);
-      setLoading(false);
-      setForm({ name: "", familyName: "", inviteFamily: false });
-    }, 1000);
+    const submission = await createGuestInvite(form);
+    if (submission instanceof Error) {
+      console.error("Error creating guest invite:", submission);
+      // Handle error (e.g., show a notification)
+    } else {
+      console.log("Guest invite created successfully:", submission);
+      // Reset form or show success message
+    }
+    setLoading(false);
+    setForm({ name: "", familyName: "", inviteFamily: false });
   };
   return (
     <div className="bg-pink/10 space-y-4 rounded-lg p-6">

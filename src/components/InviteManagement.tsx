@@ -2,8 +2,12 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Users } from "lucide-react";
 import InviteForm from "./InviteForm";
+import { fetchAllInvites } from "~/server/actions/actions";
+import InviteList from "./InviteList";
 
-const InviteManagement = () => {
+const InviteManagement = async () => {
+  const invites = await fetchAllInvites();
+
   return (
     <div className="space-y-6">
       <Card>
@@ -13,6 +17,7 @@ const InviteManagement = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <InviteForm />
+          <InviteList invites={invites} />
         </CardContent>
       </Card>
     </div>

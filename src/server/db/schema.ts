@@ -20,7 +20,7 @@ import {
 export const createTable = singlestoreTableCreator((name) => `ntheo_${name}`);
 
 // creates a user table
-export const user = createTable(
+export const user_table = createTable(
   "user",
   {
     id: bigint("id", { mode: "number", unsigned: true })
@@ -40,7 +40,7 @@ export const user = createTable(
 );
 
 // Creates a table for managing invites
-export const invites = createTable("invite", {
+export const invites_table = createTable("invite", {
   id: bigint("id", { mode: "number", unsigned: true })
     .primaryKey()
     .autoincrement(),
@@ -60,7 +60,7 @@ export const invites = createTable("invite", {
 
 // create a guest when the invite is accepted
 // and the number of guests is greater than 0
-export const guests = createTable(
+export const guests_table = createTable(
   "guest",
   {
     id: bigint("id", { mode: "number", unsigned: true })
@@ -78,7 +78,7 @@ export const guests = createTable(
 );
 
 // Media table
-export const media = createTable("media", {
+export const media_table = createTable("media", {
   id: bigint("id", { mode: "number", unsigned: true })
     .primaryKey()
     .autoincrement(),
@@ -89,7 +89,7 @@ export const media = createTable("media", {
   size: bigint("size", { mode: "number" }).notNull(), // Size in bytes
 });
 
-export type DB_UserType = typeof user.$inferSelect;
-export type DB_InviteType = typeof invites.$inferSelect;
-export type DB_GuestType = typeof guests.$inferSelect;
-export type DB_MediaType = typeof media.$inferSelect;
+export type DB_UserType = typeof user_table.$inferSelect;
+export type DB_InviteType = typeof invites_table.$inferSelect;
+export type DB_GuestType = typeof guests_table.$inferSelect;
+export type DB_MediaType = typeof media_table.$inferSelect;
