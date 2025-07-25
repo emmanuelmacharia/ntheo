@@ -1,6 +1,7 @@
 import { Toaster } from "sonner";
 import HeroSection from "~/components/HeroSection";
 import InviteManagement from "~/components/InviteManagement";
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   return (
