@@ -87,7 +87,7 @@ const InviteDetails = (props: { invite: DB_InviteType | Error }) => {
               RSVP Now
             </Button>
             <p className="text-muted-foreground text-sm">
-              Please respond by August 2nd, 2024
+              Please respond by August 2nd, 2025
             </p>
           </div>
         </>

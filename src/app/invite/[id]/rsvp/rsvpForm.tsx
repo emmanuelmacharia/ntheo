@@ -13,24 +13,23 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
     <>
       {
         // If the link is invalid
-        props.invite instanceof Error ||
-          (!props.invite.id && (
-            <div className="from-primary via-african-terracotta to-african-gold flex min-h-screen items-center justify-center bg-gradient-to-br p-4">
-              <Card className="w-full max-w-md">
-                <CardContent className="p-8 text-center">
-                  <h2 className="text-destructive mb-4 text-2xl font-bold">
-                    Invalid RSVP Link
-                  </h2>
-                  <p className="text-muted-foreground mb-6">
-                    Please use the RSVP link from your invitation.
-                  </p>
-                  <Button onClick={() => router.push("/")} variant="outline">
-                    Go to Wedding Site
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          ))
+        (props.invite instanceof Error || !props.invite.id) && (
+          <div className="from-primary via-african-terracotta to-african-gold flex min-h-screen items-center justify-center bg-gradient-to-br p-4">
+            <Card className="w-full max-w-md">
+              <CardContent className="p-8 text-center">
+                <h2 className="text-destructive mb-4 text-2xl font-bold">
+                  Invalid RSVP Link
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Please use the RSVP link from your invitation.
+                </p>
+                <Button onClick={() => router.push("/")} variant="outline">
+                  Go to Wedding Site
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )
       }
       {
         // if the guest tries using an expired link

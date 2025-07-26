@@ -1,7 +1,7 @@
 import { Heart } from "lucide-react";
 import React from "react";
 
-const inviteHeader = () => {
+const InviteHeader = () => {
   return (
     <div className="mb-4 text-center">
       <div className="bg-gold shadow-gold mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
@@ -13,4 +13,4 @@ const inviteHeader = () => {
   );
 };
 
-export default inviteHeader;
+export default InviteHeader;
