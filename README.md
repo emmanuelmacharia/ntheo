@@ -11,18 +11,20 @@
 - [ ] Create the home page
   - [x] Create the hero section
   - [x] Create the Invite form
-  - [ ] Create the list of invitees
+  - [x] Create the list of invitees
   - [ ] Create the upload section UI (uploadthing will be integrated later)
   - [ ] Create the QR section
   - [ ] Create the gallery
   - [ ] Create the footer
-- [ ] Create the sharable invite page
+- [x] Create the sharable invite page
+- [ ] Create the rsvp form
 
 ## Backend
 
-- [ ] Add DB schema
-  - [ ] Add user table (with roles - (whitelist only))
-  - [ ] Add invites table - with rsvp and invitation details
+- [x] Add DB schema
+  - [x] Add user table (with roles - (whitelist only))
+  - [x] Add invites table - with rsvp and invitation details
+  - [x] Add guests table
   - [ ] Add media table - with images and video urls; ensure you can have curation for the gallery in the homepage
 - [ ] Add Auth
 - [ ] Integrate UploadThing
