@@ -29,7 +29,7 @@ const HeroSection = () => {
             perspective.
           </p>
         </div>
-        <div className="flex flex-row items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
           {/* TODO: ADD ACTION ON THESE BUTTONS */}
           <Button variant="pink" size="lg" className="px-8 py-6 text-lg">
             <Camera className="mr-3 h-6 w-6" />
