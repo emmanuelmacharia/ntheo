@@ -5,7 +5,8 @@ import React from "react";
 const Header = () => {
   return (
     <header
-      className="from-burnt-orange via-burgund/50 to-gold flex h-16 items-center justify-end gap-4 bg-gradient-to-br bg-repeat p-4"
+      aria-label="Main site header"
+      className="from-burnt-orange via-burgundy/50 to-gold flex h-16 items-center justify-end gap-4 bg-gradient-to-br bg-repeat p-4"
       style={{
         backgroundImage: `url('/african-pattern.png')`,
         backgroundSize: "300px 300px",

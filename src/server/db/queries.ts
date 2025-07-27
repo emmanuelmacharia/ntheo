@@ -156,8 +156,8 @@ export const MUTATIONS = {
         .where(eq(user_table.id, result[0]!.id));
       return createdUser;
     } catch (error) {
-      console.error("Error creating guest invite:", error);
-      return new Error("Failed to create guest invite");
+      console.error("Error creating user:", error);
+      return new Error("Failed to create user");
     }
   },
 };

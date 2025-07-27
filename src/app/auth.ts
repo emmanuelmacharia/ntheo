@@ -19,7 +19,10 @@ export const authUser = async (): Promise<DB_UserType | null> => {
   if (session.userId || clerkUser?.emailAddresses.length) {
     // means that the user has used clerk to either register or log in
     // check that the user's email exists in the db;
-    const email = clerkUser?.emailAddresses[0]!.emailAddress ?? "";
+    const email = clerkUser?.emailAddresses[0]!.emailAddress;
+    if (!email) {
+      return null;
+    }
     const whitelistedUserPromise = fetchWhitelistedUser(email);
     const userPromise = fetchUser(email);
     // If the user does not exist in the db, then first check that the user whitelist table if they're require

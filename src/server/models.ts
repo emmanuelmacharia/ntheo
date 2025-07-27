@@ -30,6 +30,8 @@ export const inviteRsvpSchema = z
 export const userSchema = z
   .object({
     email: z.string().email("invalid email"),
-    role: z.string(),
+    role: z.enum(["ADMIN", "CURATOR"], {
+      errorMap: () => ({ message: "Role must be either ADMIN or CURATOR" }),
+    }),
   })
   .strict();
