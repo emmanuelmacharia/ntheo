@@ -77,4 +77,29 @@ export const MUTATIONS = {
       return new Error(`Failed to delete invite`);
     }
   },
+
+  updateRSVP: async function (
+    input: {
+      rsvp: boolean;
+      accepted: boolean;
+      numberOfGuests: number;
+      requiresTransport: boolean;
+    },
+    id: number,
+  ) {
+    try {
+      await db
+        .update(invites_table)
+        .set({
+          rsvp: input.rsvp,
+          accepted: input.accepted,
+          numberOfGuests: input.numberOfGuests,
+        })
+        .where(eq(invites_table.id, id));
+      return `rsvp updated successfully`;
+    } catch (error) {
+      console.error(error);
+      return new Error(`Failed to update rsvp details`);
+    }
+  },
 };

@@ -1,7 +1,7 @@
 "use server";
 import { MUTATIONS, QUERIES } from "../db/queries";
 import type { DB_InviteType } from "../db/schema";
-import { inviteUserSchema } from "../models";
+import { inviteRsvpSchema, inviteUserSchema } from "../models";
 import { cookies } from "next/headers";
 
 const forceRefresh = async () => {
@@ -67,6 +67,26 @@ export const getInviteById = async (id: number) => {
   }
   if (!result) {
     return new Error("No invite found");
+  }
+  return result;
+};
+
+export const updateRsvpForm = async (
+  input: {
+    rsvp: boolean;
+    accepted: boolean;
+    numberOfGuests: number;
+    requiresTransport: boolean;
+  },
+  id: number,
+) => {
+  const validatedInput = inviteRsvpSchema.safeParse(input);
+  if (!validatedInput.success) {
+    return new Error(`Invalid data`);
+  }
+  const result = await MUTATIONS.updateRSVP(validatedInput.data, id);
+  if (result instanceof Error) {
+    return new Error(result.message);
   }
   return result;
 };
