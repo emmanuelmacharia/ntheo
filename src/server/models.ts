@@ -17,3 +17,12 @@ export type Invite = {
   familyName?: string;
   inviteFamily: boolean;
 };
+
+export const inviteRsvpSchema = z
+  .object({
+    rsvp: z.boolean(),
+    accepted: z.boolean(),
+    requiresTransport: z.boolean(),
+    numberOfGuests: z.number().min(1).max(2),
+  })
+  .strict();
