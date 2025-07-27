@@ -88,5 +88,6 @@ export const updateRsvpForm = async (
   if (result instanceof Error) {
     return new Error(result.message);
   }
+  await forceRefresh();
   return result;
 };

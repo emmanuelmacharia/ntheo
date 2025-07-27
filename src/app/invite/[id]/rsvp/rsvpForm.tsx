@@ -62,7 +62,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
           <div className="w-full">
             <div className="p-8 text-center">
               <h2 className="text-destructive mb-4 text-2xl font-bold">
-                Error regisistering your submission
+                Error registering your submission
               </h2>
               <p className="text-muted-foreground mb-6">
                 We encountered an issue trying to update your rsvp. Please reach
@@ -287,7 +287,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                             }))
                           }
                           className=""
-                          id="attendance"
+                          id="transportation"
                         >
                           <div className="border-pink/20 hover:bg-pink/5 flex items-center space-x-3 rounded-lg border p-3">
                             <RadioGroupItem

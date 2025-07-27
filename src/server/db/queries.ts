@@ -86,7 +86,7 @@ export const MUTATIONS = {
       requiresTransport: boolean;
     },
     id: number,
-  ) {
+  ): Promise<string | Error> {
     try {
       await db
         .update(invites_table)
@@ -94,6 +94,7 @@ export const MUTATIONS = {
           rsvp: input.rsvp,
           accepted: input.accepted,
           numberOfGuests: input.numberOfGuests,
+          requiresTransport: input.requiresTransport,
         })
         .where(eq(invites_table.id, id));
       return `rsvp updated successfully`;
