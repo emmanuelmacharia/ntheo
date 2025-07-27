@@ -50,7 +50,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
       console.error("Error updating invite details", submission);
       setSubmissionError(true);
     } else {
-      setSubmissionSucceeded(true);
+      // setSubmissionSucceeded(true);
     }
   };
 
@@ -75,40 +75,6 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
           </div>
         )
       }
-      {submissionSucceeded && (
-        // if submission is successful
-        <div className="w-full">
-          <div className="p-8 text-center">
-            <div className="bg-african-gold mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-              <Check className="text-african-earth h-8 w-8" />
-            </div>
-            <h2 className="text-african-earth mb-4 text-2xl font-bold">
-              RSVP Confirmed!
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {form.attending === "yes"
-                ? "We're excited to celebrate with you on our special day!"
-                : "Thank you for letting us know. We'll miss having you there!"}
-            </p>
-            <div className="space-y-3">
-              <Button
-                onClick={() => router.push("/")}
-                variant="golden"
-                className="w-full"
-              >
-                Back to Wedding Site
-              </Button>
-              <Button
-                onClick={() => setEditRsvp(true)}
-                variant="outline"
-                className="w-full"
-              >
-                Update RSVP
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {
         // If the link is invalid
