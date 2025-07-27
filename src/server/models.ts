@@ -26,3 +26,10 @@ export const inviteRsvpSchema = z
     numberOfGuests: z.number().min(1).max(2),
   })
   .strict();
+
+export const userSchema = z
+  .object({
+    email: z.string().email("invalid email"),
+    role: z.string(),
+  })
+  .strict();

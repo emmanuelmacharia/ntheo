@@ -1,7 +1,13 @@
 import { db } from ".";
 import { eq, desc } from "drizzle-orm";
 
-import { invites_table, type DB_InviteType } from "./schema";
+import {
+  invites_table,
+  user_table,
+  user_whitelist_table,
+  type DB_InviteType,
+  type DB_UserType,
+} from "./schema";
 import { inviteUserSchema, type Invite } from "../models";
 
 export const QUERIES = {
@@ -33,6 +39,34 @@ export const QUERIES = {
     } catch (error) {
       console.error("Error fetching invite:", error);
       return new Error("Failed to fetch invite");
+    }
+  },
+
+  getWhitelistedUser: async function (email: string) {
+    try {
+      const user = await db
+        .select()
+        .from(user_whitelist_table)
+        .where(eq(user_whitelist_table.email, email));
+      console.log(user);
+      return user[0]?.email ? user[0] : null;
+    } catch (error) {
+      console.error("Error fetching whitelisted user", error);
+      return new Error("Failed to fetch whitelisted user");
+    }
+  },
+
+  getUser: async function (email: string) {
+    try {
+      const user = await db
+        .select()
+        .from(user_table)
+        .where(eq(user_table.email, email));
+      console.log(user);
+      return user[0]?.email ? user[0] : null;
+    } catch (error) {
+      console.error("Error fetching user", error);
+      return new Error("Failed to fetch  user");
     }
   },
 };
@@ -101,6 +135,29 @@ export const MUTATIONS = {
     } catch (error) {
       console.error(error);
       return new Error(`Failed to update rsvp details`);
+    }
+  },
+
+  createUser: async function (input: {
+    email: string;
+    role: string;
+  }): Promise<DB_UserType[] | Error> {
+    try {
+      const result = await db
+        .insert(user_table)
+        .values({
+          email: input.email,
+          role: input.role,
+        })
+        .$returningId();
+      const createdUser = await db
+        .select()
+        .from(user_table)
+        .where(eq(user_table.id, result[0]!.id));
+      return createdUser;
+    } catch (error) {
+      console.error("Error creating guest invite:", error);
+      return new Error("Failed to create guest invite");
     }
   },
 };

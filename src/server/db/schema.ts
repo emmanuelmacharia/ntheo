@@ -26,7 +26,6 @@ export const user_table = createTable(
     id: bigint("id", { mode: "number", unsigned: true })
       .primaryKey()
       .autoincrement(),
-    name: text("name").notNull(),
     email: text("email").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
@@ -38,6 +37,16 @@ export const user_table = createTable(
     emailUnique: index("email_idx").on(table.id, table.email), // Unique index on email
   }),
 );
+
+export const user_whitelist_table = createTable("user_whitelist_table", {
+  id: bigint("id", { mode: "number", unsigned: true })
+    .primaryKey()
+    .autoincrement(),
+  email: text("email").notNull(),
+  role: text("role").notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+});
 
 // Creates a table for managing invites
 export const invites_table = createTable("invite", {
@@ -87,9 +96,11 @@ export const media_table = createTable("media", {
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   size: bigint("size", { mode: "number" }).notNull(), // Size in bytes
+  curated: boolean("accepted").default(false).notNull(),
 });
 
 export type DB_UserType = typeof user_table.$inferSelect;
 export type DB_InviteType = typeof invites_table.$inferSelect;
 export type DB_GuestType = typeof guests_table.$inferSelect;
 export type DB_MediaType = typeof media_table.$inferSelect;
+export type DB_UserWhitelistType = typeof user_whitelist_table.$inferSelect;

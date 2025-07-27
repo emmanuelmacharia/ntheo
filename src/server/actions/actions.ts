@@ -1,7 +1,7 @@
 "use server";
 import { MUTATIONS, QUERIES } from "../db/queries";
 import type { DB_InviteType } from "../db/schema";
-import { inviteRsvpSchema, inviteUserSchema } from "../models";
+import { inviteRsvpSchema, inviteUserSchema, userSchema } from "../models";
 import { cookies } from "next/headers";
 
 const forceRefresh = async () => {
@@ -88,6 +88,41 @@ export const updateRsvpForm = async (
   if (result instanceof Error) {
     return new Error(result.message);
   }
+  await forceRefresh();
+  return result;
+};
+
+export const fetchWhitelistedUser = async (email: string) => {
+  const result = await QUERIES.getWhitelistedUser(email);
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
+  return result;
+};
+
+export const fetchUser = async (email: string) => {
+  const result = await QUERIES.getUser(email);
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
+  return result;
+};
+
+export const createUser = async (user: { email: string; role: string }) => {
+  const validatedInput = userSchema.safeParse(user);
+  if (!validatedInput.success) {
+    return new Error(`Invalid data`);
+  }
+  const result = await MUTATIONS.createUser(validatedInput.data);
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
   await forceRefresh();
   return result;
 };
