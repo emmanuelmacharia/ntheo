@@ -50,7 +50,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
       console.error("Error updating invite details", submission);
       setSubmissionError(true);
     } else {
-      setForm({ attending: "", guestCount: "1", requiresTransportation: "" });
+      setSubmissionSucceeded(true);
     }
   };
 
@@ -328,7 +328,11 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                       type="submit"
                       className="space-y-6 px-6 py-4 font-semibold text-white/80"
                       variant="pink"
-                      disabled={!form.attending}
+                      disabled={
+                        !form.attending ||
+                        (form.attending === "yes" &&
+                          !form.requiresTransportation)
+                      }
                     >
                       Complete
                     </Button>
