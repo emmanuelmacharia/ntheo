@@ -13,6 +13,8 @@ import type { DB_InviteType } from "~/server/db/schema";
 const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
   const router = useRouter();
   const [editRsvp, setEditRsvp] = useState(false);
+  const [submissionError, setSubmissionError] = useState(false);
+  const [submissionSucceeded, setSubmissionSucceeded] = useState(false);
 
   const [form, setForm] = useState({
     attending: "",
@@ -21,7 +23,15 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
   });
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(form);
+    if (!form.attending) {
+      // Show error message or prevent submission
+      return;
+    }
+
+    if (form.attending === "yes" && !form.requiresTransportation) {
+      // Show error message for missing transportation preference
+      return;
+    }
     const payload: {
       rsvp: boolean;
       accepted: boolean;
@@ -38,25 +48,35 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
 
     if (submission instanceof Error) {
       console.error("Error updating invite details", submission);
-      return (
-        <div className="w-full">
-          <div className="p-8 text-center">
-            <h2 className="text-destructive mb-4 text-2xl font-bold">
-              Error regisistering your submission
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              We encountered an issue trying to update your rsvp. Please reach
-              out.
-            </p>
-            <Button onClick={() => router.push("/")} variant="outline">
-              Go to Wedding Site
-            </Button>
-          </div>
-        </div>
-      );
+      setSubmissionError(true);
     } else {
       setForm({ attending: "", guestCount: "1", requiresTransportation: "" });
-      return (
+    }
+  };
+
+  return (
+    <>
+      {
+        // if the submission fails
+        submissionError && (
+          <div className="w-full">
+            <div className="p-8 text-center">
+              <h2 className="text-destructive mb-4 text-2xl font-bold">
+                Error regisistering your submission
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                We encountered an issue trying to update your rsvp. Please reach
+                out.
+              </p>
+              <Button onClick={() => router.push("/")} variant="outline">
+                Go to Wedding Site
+              </Button>
+            </div>
+          </div>
+        )
+      }
+      {submissionSucceeded && (
+        // if submission is successful
         <div className="w-full">
           <div className="p-8 text-center">
             <div className="bg-african-gold mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
@@ -88,12 +108,8 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
             </div>
           </div>
         </div>
-      );
-    }
-  };
+      )}
 
-  return (
-    <>
       {
         // If the link is invalid
         (props.invite instanceof Error || !props.invite.id) && (
@@ -312,6 +328,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                       type="submit"
                       className="space-y-6 px-6 py-4 font-semibold text-white/80"
                       variant="pink"
+                      disabled={!form.attending}
                     >
                       Complete
                     </Button>
