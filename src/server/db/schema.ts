@@ -29,7 +29,7 @@ export const user_table = createTable(
     email: text("email").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
-    role: text("role").default("user").notNull(), // Default role is 'user'
+    role: text("role").default("USER").notNull(), // Default role is 'user'
     isActive: boolean("is_active").default(true).notNull(), // Default is active
     lastLogin: timestamp("last_login", { mode: "date" }), //when they last logged in
   },
@@ -38,15 +38,21 @@ export const user_table = createTable(
   }),
 );
 
-export const user_whitelist_table = createTable("user_whitelist_table", {
-  id: bigint("id", { mode: "number", unsigned: true })
-    .primaryKey()
-    .autoincrement(),
-  email: text("email").notNull(),
-  role: text("role").notNull(),
-  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
-  createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
-});
+export const user_whitelist_table = createTable(
+  "user_whitelist_table",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .primaryKey()
+      .autoincrement(),
+    email: text("email").notNull(),
+    role: text("role").notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => ({
+    emailUnique: index("whitelist_email_idx").on(table.email),
+  }),
+);
 
 // Creates a table for managing invites
 export const invites_table = createTable("invite", {
@@ -69,22 +75,22 @@ export const invites_table = createTable("invite", {
 
 // create a guest when the invite is accepted
 // and the number of guests is greater than 0
-export const guests_table = createTable(
-  "guest",
-  {
-    id: bigint("id", { mode: "number", unsigned: true })
-      .primaryKey()
-      .autoincrement(),
-    inviteId: bigint("invite_id", { mode: "number", unsigned: true }).notNull(),
-    name: text("name").notNull(),
-    familyName: text("family_name"),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
-  },
-  (table) => ({
-    inviteIdIdx: index("guest_invite_id_idx").on(table.inviteId),
-  }),
-);
+// export const guests_table = createTable(
+//   "guest",
+//   {
+//     id: bigint("id", { mode: "number", unsigned: true })
+//       .primaryKey()
+//       .autoincrement(),
+//     inviteId: bigint("invite_id", { mode: "number", unsigned: true }).notNull(),
+//     name: text("name").notNull(),
+//     familyName: text("family_name"),
+//     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+//     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+//   },
+//   (table) => ({
+//     inviteIdIdx: index("guest_invite_id_idx").on(table.inviteId),
+//   }),
+// );
 
 // Media table
 export const media_table = createTable("media", {
@@ -96,7 +102,8 @@ export const media_table = createTable("media", {
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   size: bigint("size", { mode: "number" }).notNull(), // Size in bytes
-  curated: boolean("curated").default(false).notNull(),
+  featured: boolean("featured").default(false).notNull(), // to show up on the homescreen
+  tag: text("tag").default("UNTAGGED").notNull(), // for discoverability
 });
 
 export type DB_UserType = typeof user_table.$inferSelect;
