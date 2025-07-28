@@ -96,7 +96,7 @@ export const media_table = createTable("media", {
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   size: bigint("size", { mode: "number" }).notNull(), // Size in bytes
-  curated: boolean("accepted").default(false).notNull(),
+  curated: boolean("curated").default(false).notNull(),
 });
 
 export type DB_UserType = typeof user_table.$inferSelect;
