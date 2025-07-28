@@ -29,12 +29,10 @@ export const QUERIES = {
     inviteId: number,
   ): Promise<DB_InviteType | null | Error> {
     try {
-      console.log(inviteId);
       const invite = await db
         .select()
         .from(invites_table)
         .where(eq(invites_table.id, inviteId));
-      console.log(invite);
       return invite[0]?.id ? invite[0] : null;
     } catch (error) {
       console.error("Error fetching invite:", error);
@@ -48,7 +46,6 @@ export const QUERIES = {
         .select()
         .from(user_whitelist_table)
         .where(eq(user_whitelist_table.email, email));
-      console.log("Here is the whitelisted user: ", user);
       return user[0]?.email ? user[0] : null;
     } catch (error) {
       console.error("Error fetching whitelisted user", error);
@@ -62,7 +59,6 @@ export const QUERIES = {
         .select()
         .from(user_table)
         .where(eq(user_table.email, email));
-      console.log(user);
       return user[0]?.email ? user[0] : null;
     } catch (error) {
       console.error("Error fetching user", error);

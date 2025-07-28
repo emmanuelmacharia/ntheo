@@ -20,7 +20,6 @@ async function createDbConnection() {
       ssl: {},
     });
 
-    console.log("Connection successful!");
     return connection;
   } catch (error) {
     console.error("=== Database Connection Error ===");
