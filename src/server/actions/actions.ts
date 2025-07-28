@@ -14,8 +14,6 @@ export const createGuestInvite = async (inviteData: {
   familyName?: string;
   inviteFamily: boolean;
 }) => {
-  console.log("Creating guest invite with data:", inviteData);
-
   const parsedData = inviteUserSchema.safeParse(inviteData);
 
   if (!parsedData.success) {

@@ -32,13 +32,11 @@ const InviteForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    console.log("Submitting form:", form);
     const submission = await createGuestInvite(form);
     if (submission instanceof Error) {
       console.error("Error creating guest invite:", submission);
       // Handle error (e.g., show a notification)
     } else {
-      console.log("Guest invite created successfully:", submission);
       // Reset form or show success message
     }
     setLoading(false);
