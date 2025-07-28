@@ -108,6 +108,6 @@ export const media_table = createTable("media", {
 
 export type DB_UserType = typeof user_table.$inferSelect;
 export type DB_InviteType = typeof invites_table.$inferSelect;
-export type DB_GuestType = typeof guests_table.$inferSelect;
+// export type DB_GuestType = typeof guests_table.$inferSelect;
 export type DB_MediaType = typeof media_table.$inferSelect;
 export type DB_UserWhitelistType = typeof user_whitelist_table.$inferSelect;

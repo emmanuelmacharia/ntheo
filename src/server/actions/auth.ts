@@ -17,6 +17,8 @@ export const authUser = async (): Promise<DB_UserType | null> => {
     clerkUserPromise,
   ]);
 
+  console.log(session, clerkUser);
+
   if (session.userId || clerkUser?.emailAddresses.length) {
     // means that the user has used clerk to either register or log in
     // check that the user's email exists in the db;
@@ -36,6 +38,8 @@ export const authUser = async (): Promise<DB_UserType | null> => {
       managedUser = user;
       return managedUser;
     }
+
+    console.log(user, whitelistedUser);
 
     if (!user && whitelistedUser && !(whitelistedUser instanceof Error)) {
       // create the profile for the user

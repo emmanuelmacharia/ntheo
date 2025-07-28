@@ -48,7 +48,7 @@ export const QUERIES = {
         .select()
         .from(user_whitelist_table)
         .where(eq(user_whitelist_table.email, email));
-      console.log(user);
+      console.log("Here is the whitelisted user: ", user);
       return user[0]?.email ? user[0] : null;
     } catch (error) {
       console.error("Error fetching whitelisted user", error);

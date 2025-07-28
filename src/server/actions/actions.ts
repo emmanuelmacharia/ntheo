@@ -5,6 +5,7 @@ import { inviteRsvpSchema, inviteUserSchema, userSchema } from "../models";
 import { cookies } from "next/headers";
 
 const forceRefresh = async () => {
+  console.log("forcing refresh");
   const c = await cookies();
   c.set("force-refresh", JSON.stringify(Math.random()));
 };
@@ -98,6 +99,8 @@ export const fetchWhitelistedUser = async (email: string) => {
   if (result instanceof Error) {
     return new Error(result.message);
   }
+
+  console.log("Whitelisted User: ", result);
 
   return result;
 };
