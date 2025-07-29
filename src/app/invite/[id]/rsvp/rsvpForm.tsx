@@ -28,10 +28,10 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
       return;
     }
 
-    if (form.attending === "yes" && !form.requiresTransportation) {
-      // Show error message for missing transportation preference
-      return;
-    }
+    // if (form.attending === "yes" && !form.requiresTransportation) {
+    //   // Show error message for missing transportation preference
+    //   return;
+    // }
     const payload: {
       rsvp: boolean;
       accepted: boolean;
