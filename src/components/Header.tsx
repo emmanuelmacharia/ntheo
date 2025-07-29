@@ -13,9 +13,13 @@ const Header = () => {
       }}
     >
       <SignedOut>
-        <div className="bg-burgundy flex cursor-pointer items-center gap-3 rounded-full px-4 py-2 text-sm font-medium text-white sm:h-12 sm:px-5 sm:text-base">
-          <LaptopMinimalCheck />
-          <SignInButton />
+        <div className="flex cursor-pointer items-center gap-3 rounded-[50%] text-sm font-medium text-white sm:text-base">
+          <SignInButton>
+            <button className="cursor-pointer">
+              {" "}
+              <LaptopMinimalCheck />
+            </button>
+          </SignInButton>
         </div>
       </SignedOut>
       <SignedIn>
