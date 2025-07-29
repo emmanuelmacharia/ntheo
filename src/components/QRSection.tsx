@@ -60,7 +60,7 @@ const QRSection = () => {
               </div>
             </div>
             <div className="flex justify-center">
-              <Card className="shadow-warm w-fit border-2">
+              {/* <Card className="shadow-warm w-fit border-2">
                 <CardHeader className="text-center">
                   <CardTitle className="text-foreground flex items-center justify-center gap-3">
                     <QrCode className="text-primary h-6 w-6" />
@@ -70,7 +70,7 @@ const QRSection = () => {
                 <CardContent className="text-center">
                   <div className="mg-6 inline-block rounded-lg bg-white p-6"></div>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           </div>
         </div>
