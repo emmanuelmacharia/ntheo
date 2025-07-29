@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { ImageIcon } from "lucide-react";
+import Upload from "./Upload";
 
 const MediaUpload = () => {
   return (
@@ -18,8 +19,11 @@ const MediaUpload = () => {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-3 text-lg">
               <ImageIcon className="text-burnt-orange h-6 w-6" />
-              Upload Wedding Photos
+              Upload Ntheo Photos
             </CardTitle>
+            <div className="hover:bg-muted/50 cursor-pointer rounded-lg p-8 text-center transition-colors">
+              <Upload />
+            </div>
           </CardHeader>
         </Card>
       </div>

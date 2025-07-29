@@ -4,6 +4,9 @@ import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist } from "next/font/google";
 import Header from "~/components/Header";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/uploadthing/core";
 
 export const metadata: Metadata = {
   title: "Ntheo Ceremony",
@@ -23,6 +26,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${geist.variable}`}>
         <body>
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Header />
           {children}
         </body>
