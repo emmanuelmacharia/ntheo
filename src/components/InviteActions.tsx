@@ -24,7 +24,7 @@ const InviteActions = (props: { id: number }) => {
     }
   };
   const handleSharing = async () => {
-    const text = `Moureen and Emmanuel invite you to our Ntheo ceremony. Visit ${link} to rsvp`;
+    const text = `Moureen and Emmanuel invite you to our Ntheo ceremony. To rsvp, visit: `;
     try {
       await navigator.share({
         title: `Ntheo ceremony`,
