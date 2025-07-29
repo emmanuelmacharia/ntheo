@@ -24,7 +24,7 @@ const InviteActions = (props: { id: number }) => {
     }
   };
   const handleSharing = async () => {
-    const text = `Moureen and Emmanuel invite you to our Ntheo ceremony. To rsvp, visit: `;
+    const text = `Wanza and Kiangai request the pleasure of your company at their Ntheo/Ruracio ceremony. Kindly RSVP at:  `;
     try {
       await navigator.share({
         title: `Ntheo ceremony`,

@@ -240,11 +240,11 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                           </span>
                         </div>
                       </div>
-                      <div className="mt-5 space-y-3">
+                      {/* <div className="mt-5 space-y-3">
                         <Label className="text-burgundy text-base">
                           Do you need transportation?
                         </Label>
-                        {/* <RadioGroup
+                        <RadioGroup
                           value={form.requiresTransportation}
                           onValueChange={(value) =>
                             setForm((prev) => ({
@@ -285,8 +285,8 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                               <span>No thanks, I&apos;ll find my way</span>
                             </Label>
                           </div>
-                        </RadioGroup> */}
-                      </div>
+                        </RadioGroup>
+                      </div> */}
                     </>
                   )}
                   <div className="mt-6 flex justify-end">
