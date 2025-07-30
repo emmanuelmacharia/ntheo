@@ -28,10 +28,10 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
       return;
     }
 
-    if (form.attending === "yes" && !form.requiresTransportation) {
-      // Show error message for missing transportation preference
-      return;
-    }
+    // if (form.attending === "yes" && !form.requiresTransportation) {
+    //   // Show error message for missing transportation preference
+    //   return;
+    // }
     const payload: {
       rsvp: boolean;
       accepted: boolean;
@@ -244,7 +244,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                         <Label className="text-burgundy text-base">
                           Do you need transportation?
                         </Label>
-                      <RadioGroup
+                        <RadioGroup
                           value={form.requiresTransportation}
                           onValueChange={(value) =>
                             setForm((prev) => ({
