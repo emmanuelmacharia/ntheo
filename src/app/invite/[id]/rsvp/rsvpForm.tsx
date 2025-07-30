@@ -293,7 +293,7 @@ const RsvpForm = (props: { invite: DB_InviteType | Error; id: number }) => {
                     <Button
                       type="submit"
                       className="space-y-6 px-6 py-4 font-semibold text-white/80"
-                      variant="pink"
+                      variant="burntOrange"
                       disabled={!form.attending}
                     >
                       Complete

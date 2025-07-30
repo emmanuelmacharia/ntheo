@@ -6,7 +6,7 @@ const InviteLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <main className="from-burnt-orange via-burgund/50 to-gold relative min-h-screen overflow-hidden bg-gradient-to-br">
+    <main className="from-burnt-orange to-gold relative min-h-screen overflow-hidden bg-gradient-to-br">
       <div className="absolute inset-0 opacity-30">
         <div
           className="h-full w-full bg-repeat"

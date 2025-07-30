@@ -81,7 +81,7 @@ const InviteDetails = (props: { invite: DB_InviteType | Error }) => {
             <Button
               onClick={() => router.push(rsvp)}
               className="w-full"
-              variant="pink"
+              variant="burntOrange"
               size="lg"
             >
               RSVP Now

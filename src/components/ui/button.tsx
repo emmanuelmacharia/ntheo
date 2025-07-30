@@ -21,7 +21,10 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         pink: "bg-gradient-to-r from-pink to-coral text-primary-foreground hover:shadow-pink transform hover:scale-105",
-        golden: "bg-gold text-burgundy hover:bg-gold/90 shadow-gold",
+        golden:
+          "bg-gold text-burgundy hover:bg-gold/90 shadow-gold  transform hover:scale-105",
+        burntOrange:
+          "bg-gradient-to-r from-burnt-orange to-burgundy/80 text-primary-foreground hover:shadow-burnt-orange transform hover:scale-105",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
