@@ -13,9 +13,9 @@ const InviteList = (props: { invites: DB_InviteType[] | [] }) => {
         <h3 className="text-burgundy font-semibold">
           Guest List ({invites.length})
         </h3>
-        <Button variant="outline" size="sm">
+        {/* <Button variant="outline" size="sm">
           View RSVP Summary
-        </Button>
+        </Button> */}
       </section>
       <div className="space-y-3">
         {invites.map((invite) => (
