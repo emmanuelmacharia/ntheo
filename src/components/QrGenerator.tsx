@@ -20,10 +20,16 @@ const QrGenerator = () => {
     const imageEl = imgParent.querySelector("img");
 
     if (!imageEl) {
+      console.error("QR code image not available");
       return;
     }
 
     const imgSrc = imageEl.src;
+    if (!imgSrc) {
+      console.error("QR code image source not available");
+      return;
+    }
+
     const downloadlink = document.createElement("a");
     downloadlink.href = imgSrc;
     downloadlink.download = "wedding-qr-code.jpeg";
@@ -41,6 +47,10 @@ const QrGenerator = () => {
       } catch (error) {
         console.log("Error sharing:", error);
       }
+    } else {
+      // Fallback for browsers without Web Share API
+      await navigator.clipboard.writeText(window.location.href);
+      // TODO: Consider showing a toast notification that URL was copied
     }
   };
 
@@ -49,6 +59,8 @@ const QrGenerator = () => {
       <div
         className="mb-2 inline-block rounded-lg bg-white p-6"
         id="qr-image-wanza-kiangai"
+        role="img"
+        aria-label="QR code for sharing photos from the event"
       >
         <Image
           text={`${link}`}

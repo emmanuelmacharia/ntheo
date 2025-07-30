@@ -62,13 +62,13 @@ const QRSection = () => {
             </div>
             <div className="flex justify-center py-8">
               <Card className="shadow-warm w-fit border-2">
-                <CardHeader className="-pb-4 text-center">
+                <CardHeader className="pb-0 text-center">
                   <CardTitle className="text-foreground flex items-center justify-center gap-3">
                     <QrIcon className="text-primary h-6 w-6" />
                     Ntheo Photo Share
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="-pt-8 -mt-8 text-center">
+                <CardContent className="-mt-8 pt-0 text-center">
                   <div className="mb-6 inline-block rounded-lg bg-white p-6">
                     <QrGenerator />
                   </div>
