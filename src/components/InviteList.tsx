@@ -3,6 +3,7 @@ import type { DB_InviteType } from "~/server/db/schema";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import InviteActions from "./InviteActions";
+import { BadgeCheck, BadgeX, Check } from "lucide-react";
 
 const InviteList = (props: { invites: DB_InviteType[] | [] }) => {
   const { invites } = props;
@@ -27,6 +28,12 @@ const InviteList = (props: { invites: DB_InviteType[] | [] }) => {
                 <span className="text-burgundy font-medium">{invite.name}</span>
                 {invite.inviteFamily && (
                   <Badge variant="secondary">Family</Badge>
+                )}
+                {invite.rsvp && invite.accepted && (
+                  <BadgeCheck className="h-4 w-4 text-green-700" />
+                )}
+                {invite.rsvp && !invite.accepted && (
+                  <BadgeX className="h-4 w-4 text-red-700" />
                 )}
               </div>
               {invite.familyName && (
