@@ -21,7 +21,7 @@ const MediaUpload = () => {
               <ImageIcon className="text-burnt-orange h-6 w-6" />
               Upload Ntheo Photos
             </CardTitle>
-            <div className="hover:bg-muted/50 cursor-pointer rounded-lg p-8 text-center transition-colors">
+            <div className="hover:bg-muted/50 cursor-pointer rounded-lg text-center transition-colors md:p-8">
               <Upload />
             </div>
           </CardHeader>

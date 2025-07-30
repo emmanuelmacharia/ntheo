@@ -1,10 +1,11 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { QrCode } from "lucide-react";
+import { QrCode as QrIcon } from "lucide-react";
+import QrGenerator from "./QrGenerator";
 
 const QRSection = () => {
   return (
-    <div className="bg-muted/30 py-16">
+    <div className="bg-pink/4 py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <div className="text-foreground mb-4 text-3xl font-semibold">
@@ -59,18 +60,20 @@ const QRSection = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-center">
-              {/* <Card className="shadow-warm w-fit border-2">
-                <CardHeader className="text-center">
+            <div className="flex justify-center py-8">
+              <Card className="shadow-warm w-fit border-2">
+                <CardHeader className="-pb-4 text-center">
                   <CardTitle className="text-foreground flex items-center justify-center gap-3">
-                    <QrCode className="text-primary h-6 w-6" />
+                    <QrIcon className="text-primary h-6 w-6" />
                     Ntheo Photo Share
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-center">
-                  <div className="mg-6 inline-block rounded-lg bg-white p-6"></div>
+                <CardContent className="-pt-8 -mt-8 text-center">
+                  <div className="mb-6 inline-block rounded-lg bg-white p-6">
+                    <QrGenerator />
+                  </div>
                 </CardContent>
-              </Card> */}
+              </Card>
             </div>
           </div>
         </div>
