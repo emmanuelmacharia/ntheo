@@ -1,9 +1,21 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
+import z from "zod";
+
+const ImageDimensionsSchema = z.object({
+  width: z.number().positive(),
+  height: z.number().positive(),
+});
+
+const FileSchema = z.object({
+  lastModified: z.number(),
+  name: z.string().min(1, "File name cannot be empty"),
+  size: z.number().positive("File size must be positive"),
+  type: z.string().min(1, "File type cannot be empty"),
+});
+
+const FilesInputSchema = FileSchema.merge(ImageDimensionsSchema);
 
 const f = createUploadthing();
-
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
@@ -26,8 +38,9 @@ export const ourFileRouter = {
       maxFileCount: 20,
     },
   })
+    .input(FilesInputSchema)
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
+    .middleware(async ({ req, files }) => {
       // This code runs on your server before upload
       //   const user = await auth(req);
 
@@ -36,6 +49,7 @@ export const ourFileRouter = {
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       //   return { userId: user.id };
+      console.log("there runs the request", files, files[0]);
       return { request: req };
     })
     .onUploadComplete(async ({ metadata, file }) => {
