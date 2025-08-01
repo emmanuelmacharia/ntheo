@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import type { DB_MediaType } from "~/server/db/schema";
 import { Button } from "./ui/button";
 import { Grid3X3, LayoutGrid, Users2 } from "lucide-react";
@@ -8,7 +8,7 @@ import SharedImage from "./sharedImage";
 import SharedVideo from "./sharedVideo";
 
 const ClientGallery = (props: { media: DB_MediaType[] }) => {
-  const [viewMode, setViewMode] = useState<"grid" | "masonry">("masonry");
+  const [viewMode, setViewMode] = useState<"grid" | "masonry">("grid"); // default to grid for now till we figure out sizes
   const imageTypes = ["img", "jpeg", "webp", "png", "svg"];
   const videoTypes = ["mp4"];
 
@@ -22,14 +22,14 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <div className="bg-muted flex items-center gap-3 rounded-lg p-1">
-              <Button
+              {/* <Button
                 variant={viewMode === "masonry" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("masonry")}
               >
                 <LayoutGrid className="mr-2 h-4 w-4" />
                 Masonry
-              </Button>
+              </Button> */}
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -73,7 +73,9 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
                     <SharedImage photoConfig={{ image: media, viewMode }} />
                   )}
                   {videoTypes.includes(media.type.toLowerCase()) && (
-                    <SharedVideo videoConfig={{ video: media, viewMode }} />
+                    <Suspense fallback={<p>Loading video...</p>}>
+                      <SharedVideo videoConfig={{ video: media, viewMode }} />
+                    </Suspense>
                   )}
                 </Card>
               </div>

@@ -11,9 +11,9 @@ const sharedImage = (props: {
   const { image, viewMode } = props.photoConfig;
   return (
     <div
-      className="relative max-h-[350px] w-full"
+      className="relative max-h-[350px] w-full rounded-lg"
       style={{
-        height: viewMode === "masonry" ? "200px" : "250px",
+        height: viewMode === "masonry" ? "200px" : "200px",
       }}
     >
       <Image
@@ -21,7 +21,7 @@ const sharedImage = (props: {
         alt={`Photo taken at the ntheo`}
         className="h-auto w-full object-cover"
         fill={true}
-        style={{ objectFit: "contain" }}
+        style={{ objectFit: "cover" }}
       />
     </div>
   );

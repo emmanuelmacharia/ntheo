@@ -130,3 +130,25 @@ export const fetchMockMedia = async () => {
   const result = await Promise.resolve(media);
   return result;
 };
+
+export const createMedia = async (
+  files: {
+    name: string;
+    url: string;
+    size: number;
+  }[],
+) => {
+  console.log(files);
+};
+
+export const fetchMedia = async (featured = false) => {
+  const result = featured
+    ? await QUERIES.getFeaturedMedia()
+    : await QUERIES.getAllMedia();
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
+  return result;
+};

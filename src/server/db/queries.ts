@@ -3,9 +3,11 @@ import { eq, desc } from "drizzle-orm";
 
 import {
   invites_table,
+  media_table,
   user_table,
   user_whitelist_table,
   type DB_InviteType,
+  type DB_MediaType,
   type DB_UserType,
 } from "./schema";
 import { inviteUserSchema, type Invite } from "../models";
@@ -63,6 +65,33 @@ export const QUERIES = {
     } catch (error) {
       console.error("Error fetching user", error);
       return new Error("Failed to fetch  user");
+    }
+  },
+
+  getAllMedia: async function (): Promise<DB_MediaType[] | [] | Error> {
+    try {
+      const media = await db
+        .select()
+        .from(media_table)
+        .orderBy(desc(media_table.createdAt));
+      return media;
+    } catch (error) {
+      console.error("Error fetching media", error);
+      return new Error("Failed to getch uploaded media");
+    }
+  },
+
+  getFeaturedMedia: async function (): Promise<DB_MediaType[] | [] | Error> {
+    try {
+      const media = await db
+        .select()
+        .from(media_table)
+        .where(eq(media_table.featured, true))
+        .orderBy(desc(media_table.createdAt));
+      return media;
+    } catch (error) {
+      console.error("Error fetching media", error);
+      return new Error("Failed to getch uploaded media");
     }
   },
 };
