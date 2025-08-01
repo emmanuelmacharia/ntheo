@@ -4,6 +4,7 @@ import InviteManagement from "~/components/InviteManagement";
 import { authUser } from "../server/actions/auth";
 import MediaUpload from "~/components/MediaUpload";
 import QRSection from "~/components/QRSection";
+import Gallery from "~/components/Gallery";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
@@ -16,6 +17,7 @@ export default async function HomePage() {
         <InviteManagement user={managedUser} />
         <MediaUpload />
         <QRSection />
+        <Gallery />
       </section>
       <Toaster />
     </main>

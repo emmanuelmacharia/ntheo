@@ -3,6 +3,7 @@ import { MUTATIONS, QUERIES } from "../db/queries";
 import type { DB_InviteType } from "../db/schema";
 import { inviteRsvpSchema, inviteUserSchema, userSchema } from "../models";
 import { cookies } from "next/headers";
+import { media } from "../db/mockMedia";
 
 const forceRefresh = async () => {
   const c = await cookies();
@@ -122,5 +123,10 @@ export const createUser = async (user: { email: string; role: string }) => {
   }
 
   await forceRefresh();
+  return result;
+};
+
+export const fetchMockMedia = async () => {
+  const result = await Promise.resolve(media);
   return result;
 };
