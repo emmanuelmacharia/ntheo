@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { ImageIcon } from "lucide-react";
 import Upload from "./Upload";
+import { UploadV2 } from "./Uploadv2";
 
 const MediaUpload = () => {
   return (
@@ -22,7 +23,8 @@ const MediaUpload = () => {
               Upload Ntheo Photos
             </CardTitle>
             <div className="hover:bg-muted/50 cursor-pointer rounded-lg text-center transition-colors md:p-8">
-              <Upload />
+              {/* <Upload /> */}
+              <UploadV2 />
             </div>
           </CardHeader>
         </Card>
