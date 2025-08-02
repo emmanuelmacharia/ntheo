@@ -11,7 +11,9 @@ const QrGenerator = () => {
   const { Image } = useQRCode();
 
   useEffect(() => {
-    setLink(`${window.location.origin}`);
+    if (typeof window !== "undefined") {
+      setLink(`${window.location.origin}`);
+    }
   }, [link]);
 
   const handleDownload = () => {
