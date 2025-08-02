@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { Download, Share2 } from "lucide-react";
 
 const QrGenerator = () => {
-  const [link, setLink] = useState(`https://ntheo.netlify.app`);
+  const [link, setLink] = useState(`https://ntheo.netlify.app/#media-upload`);
   const { Image } = useQRCode();
 
   useEffect(() => {
