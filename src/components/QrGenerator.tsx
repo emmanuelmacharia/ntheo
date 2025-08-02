@@ -11,8 +11,10 @@ const QrGenerator = () => {
   const { Image } = useQRCode();
 
   useEffect(() => {
-    setLink(`${window.location.origin}`);
-  }, [link]);
+    if (typeof window !== "undefined") {
+      setLink(`${window.location.origin}`);
+    }
+  }, []);
 
   const handleDownload = () => {
     const imgParent = document.getElementById("qr-image-wanza-kiangai")!;

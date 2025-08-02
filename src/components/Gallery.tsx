@@ -6,7 +6,7 @@ const Gallery = async () => {
 
   if (media instanceof Error) {
     return (
-      <div className="flex items-center justify-start py-12">
+      <div className="flex items-center justify-center py-24">
         <p className="text-muted-foreground mb-8 text-xl">
           No photos found yet. Be the first to share your memories of the event
         </p>
