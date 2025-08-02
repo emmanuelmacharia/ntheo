@@ -6,7 +6,7 @@ import { UploadV2 } from "./Uploadv2";
 
 const MediaUpload = () => {
   return (
-    <section className="bg-background py-16">
+    <section className="bg-background py-16" id="media-upload">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-foreground mb-4 text-4xl font-bold">
