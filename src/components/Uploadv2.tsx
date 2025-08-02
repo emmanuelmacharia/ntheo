@@ -3,8 +3,42 @@
 import { LoaderIcon, Upload } from "lucide-react";
 import { useUploadThing } from "./utils/uploadthing";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { createMedia } from "~/server/actions/actions";
 
 type Input = Parameters<typeof useUploadThing>;
+
+interface ImageDimenions {
+  width: number;
+  height: number;
+}
+
+const getImageDimensions = (file: File): ImageDimenions | null => {
+  let dimensions: ImageDimenions | null = null;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    // handling images first
+    const img = new Image();
+
+    img.onload = () => {
+      dimensions = { width: img.width, height: img.height };
+    };
+
+    img.onerror = () => {
+      dimensions = null;
+    };
+
+    img.src = event.target?.result as string;
+  };
+
+  reader.onerror = () => {
+    dimensions = null;
+  };
+
+  reader.readAsDataURL(file);
+
+  return dimensions;
+};
 
 const useUploadThingInputProps = (...args: Input) => {
   const $ut = useUploadThing(...args);
@@ -13,10 +47,33 @@ const useUploadThingInputProps = (...args: Input) => {
     if (!e.target.files) return;
 
     const selectedFiles = Array.from(e.target.files);
-    const result = await $ut.startUpload(selectedFiles);
-    console.log("uploaded files", result);
 
-    // TODO: persist in DB
+    selectedFiles.map((file) => {
+      const imageType = "image/";
+      const fileType = file.type;
+
+      if (fileType.includes(imageType)) {
+        const dimensions = getImageDimensions(file);
+        return { ...file, ...dimensions };
+      }
+
+      return file;
+    });
+
+    const result = await $ut.startUpload(selectedFiles);
+
+    if (result?.length) {
+      // TODO: persist in DB
+      const dbTransactionResult = await createMedia(result);
+      if (dbTransactionResult instanceof Error) {
+        toast.message(`${dbTransactionResult.message}`, {
+          style: { color: "#DA2C43" },
+        });
+      }
+      toast.message(`${dbTransactionResult}`, {
+        style: { color: "#BE5103" },
+      });
+    }
   };
 
   return {
@@ -35,15 +92,12 @@ export function UploadV2() {
   const { inputProps } = useUploadThingInputProps("imageUploader", {
     onUploadBegin() {
       setUploading(true);
-      console.log("Beginning upload");
     },
     onClientUploadComplete(files) {
       setUploading(false);
-      console.log("completed", files);
     },
     onUploadError() {
       setUploading(false);
-      console.log("we errored out");
     },
   });
   return (
@@ -54,6 +108,7 @@ export function UploadV2() {
           <p className="text-foreground mb-2 text-lg font-medium">
             Uploading...
           </p>
+          <p className="text-muted-foreground">Please wait</p>
         </div>
       )}
       {!uploading && (

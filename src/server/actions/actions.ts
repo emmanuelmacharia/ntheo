@@ -4,6 +4,7 @@ import type { DB_InviteType } from "../db/schema";
 import { inviteRsvpSchema, inviteUserSchema, userSchema } from "../models";
 import { cookies } from "next/headers";
 import { media } from "../db/mockMedia";
+import type { ClientUploadedFileData } from "uploadthing/types";
 
 const forceRefresh = async () => {
   const c = await cookies();
@@ -132,13 +133,42 @@ export const fetchMockMedia = async () => {
 };
 
 export const createMedia = async (
-  files: {
-    name: string;
-    url: string;
-    size: number;
-  }[],
+  files: ClientUploadedFileData<{ uploadedBy: string }>[],
 ) => {
-  console.log(files);
+  // no need to validate as it is a response from uploadthing
+  const dataToUpload: {
+    url: string;
+    type: string;
+    size: number;
+    tag: string;
+    featured: boolean;
+  }[] = [];
+
+  // Map to the data the db expects
+  files.map((file) => {
+    const uploadData = {
+      url: file.ufsUrl,
+      type: file.type,
+      size: file.size,
+      featured: false,
+      tag: file.name,
+    };
+
+    dataToUpload.push(uploadData);
+  });
+
+  // Iterate through each file uploaded and save it to the db;
+
+  const result = await Promise.all(dataToUpload.map(MUTATIONS.createMedia));
+
+  const errored = result.filter((res) => res instanceof Error);
+
+  let errMsg = "";
+  if (errored.length) {
+    errMsg = `We had trouble uploading some of your files: ${errored.length} ${errored.length > 1 ? "files failed" : "file failed"}. Please try again`;
+  }
+
+  return errMsg ? new Error(errMsg) : `Uploaded ${result.length} files`;
 };
 
 export const fetchMedia = async (featured = false) => {

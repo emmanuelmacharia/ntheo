@@ -1,8 +1,13 @@
-import { fetchMockMedia } from "~/server/actions/actions";
+import { fetchMedia } from "~/server/actions/actions";
 import ClientGallery from "./ClientGallery";
 
 const Gallery = async () => {
-  const media = await fetchMockMedia();
+  const media = await fetchMedia();
+
+  if (media instanceof Error) {
+    return <div>No media found</div>;
+  }
+
   return <ClientGallery media={media} />;
 };
 

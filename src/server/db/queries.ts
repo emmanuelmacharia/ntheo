@@ -10,7 +10,8 @@ import {
   type DB_MediaType,
   type DB_UserType,
 } from "./schema";
-import { inviteUserSchema, type Invite } from "../models";
+import { inviteUserSchema, mediSchema, type Invite } from "../models";
+import type { ClientUploadedFileData } from "uploadthing/types";
 
 export const QUERIES = {
   getAllInvites: async function (): Promise<DB_InviteType[] | [] | Error> {
@@ -183,6 +184,41 @@ export const MUTATIONS = {
     } catch (error) {
       console.error("Error creating user:", error);
       return new Error("Failed to create user");
+    }
+  },
+
+  createMedia: async (input: {
+    url: string;
+    type: string;
+    size: number;
+    tag: string;
+    featured: boolean;
+  }): Promise<string | Error> => {
+    try {
+      const validatedInput = mediSchema.safeParse(input);
+
+      if (validatedInput.error) {
+        return new Error("Invalid input");
+      }
+
+      const result = await db
+        .insert(media_table)
+        .values({
+          url: validatedInput.data.url,
+          type: validatedInput.data.type,
+          size: validatedInput.data.size,
+          featured: validatedInput.data.featured,
+          tag: validatedInput.data.tag,
+        })
+        .$returningId();
+
+      if (result) {
+        return `${input.tag} successfully stored`;
+      }
+      return new Error(`Something went wrong`);
+    } catch (error) {
+      console.error("Error creating file", error);
+      return new Error(`${input.tag} failed to persist`);
     }
   },
 };

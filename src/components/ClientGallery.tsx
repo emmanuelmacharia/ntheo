@@ -9,8 +9,8 @@ import SharedVideo from "./sharedVideo";
 
 const ClientGallery = (props: { media: DB_MediaType[] }) => {
   const [viewMode, setViewMode] = useState<"grid" | "masonry">("grid"); // default to grid for now till we figure out sizes
-  const imageTypes = ["img", "jpeg", "webp", "png", "svg"];
-  const videoTypes = ["mp4"];
+  const imageTypes = "image";
+  const videoTypes = "video";
 
   return (
     <div className="bg-background py-16">
@@ -22,14 +22,14 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <div className="bg-muted flex items-center gap-3 rounded-lg p-1">
-              {/* <Button
+              <Button
                 variant={viewMode === "masonry" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("masonry")}
               >
                 <LayoutGrid className="mr-2 h-4 w-4" />
                 Masonry
-              </Button> */}
+              </Button>
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -69,10 +69,10 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
             {props.media.map((media) => (
               <div className="break-inside-avoid" key={media.id}>
                 <Card className="group hover:shadow-warm overflow-hidden border-0 bg-transparent shadow-none transition-all duration-300 hover:scale-105">
-                  {imageTypes.includes(media.type.toLowerCase()) && (
+                  {media.type.toLowerCase().includes(imageTypes) && (
                     <SharedImage photoConfig={{ image: media, viewMode }} />
                   )}
-                  {videoTypes.includes(media.type.toLowerCase()) && (
+                  {media.type.toLowerCase().includes(videoTypes) && (
                     <Suspense fallback={<p>Loading video...</p>}>
                       <SharedVideo videoConfig={{ video: media, viewMode }} />
                     </Suspense>

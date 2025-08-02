@@ -5,6 +5,7 @@ import { authUser } from "../server/actions/auth";
 import MediaUpload from "~/components/MediaUpload";
 import QRSection from "~/components/QRSection";
 import Gallery from "~/components/Gallery";
+import { Footer } from "~/components/footer";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
@@ -18,6 +19,9 @@ export default async function HomePage() {
         <MediaUpload />
         <QRSection />
         <Gallery />
+      </section>
+      <section className="footer">
+        <Footer />
       </section>
       <Toaster />
     </main>
