@@ -1,5 +1,7 @@
+"use client";
 import { Camera, Heart, QrCode } from "lucide-react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -32,12 +34,24 @@ const HeroSection = () => {
         <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
           {/* TODO: ADD ACTION ON THESE BUTTONS */}
           <Button variant="burntOrange" size="lg" className="px-8 py-6 text-lg">
-            <Camera className="mr-3 h-6 w-6" />
-            Share your photos
+            <Link
+              href="#media-upload"
+              className="flex items-center"
+              scroll={true}
+            >
+              <Camera className="mr-3 h-6 w-6" />
+              Share your photos
+            </Link>
           </Button>
           <Button variant="golden" size="lg" className="px-8 py-6 text-lg">
-            <QrCode className="mr-3 h-6 w-6" />
-            Scan QR code
+            <Link
+              href="#qr-section"
+              className="flex items-center"
+              scroll={true}
+            >
+              <QrCode className="mr-3 h-6 w-6" />
+              Scan QR code
+            </Link>
           </Button>
         </div>
         <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-3">

@@ -1,3 +1,4 @@
+"use client";
 import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 import { LaptopMinimalCheck } from "lucide-react";
 import React from "react";

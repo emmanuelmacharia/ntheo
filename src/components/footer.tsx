@@ -18,7 +18,7 @@ export function Footer() {
           <div className="mb-4 flex items-center justify-center">
             <Heart className="text-gold mr-3 h-8 w-8" fill="currentColor" />
             <h3 className="text-primary-foreground text-2xl font-bold">
-              Wanza x Kiangai
+              Wanza {"<>"} Kiangai
             </h3>
           </div>
           <p className="text-primary-foreground/80 mx-auto max-w-2xl text-lg">

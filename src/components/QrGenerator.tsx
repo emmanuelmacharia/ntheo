@@ -7,14 +7,14 @@ import { Button } from "./ui/button";
 import { Download, Share2 } from "lucide-react";
 
 const QrGenerator = () => {
-  const [link, setLink] = useState(`https://ntheo.netlify.app`);
+  const [link, setLink] = useState(`https://ntheo.netlify.app/#media-upload`);
   const { Image } = useQRCode();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setLink(`${window.location.origin}`);
     }
-  }, []);
+  }, [link]);
 
   const handleDownload = () => {
     const imgParent = document.getElementById("qr-image-wanza-kiangai")!;
@@ -41,7 +41,7 @@ const QrGenerator = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Wanza x Kiangai Photo Sharing",
+          title: "Wanza <> Kiangai Photo Sharing",
           text: "Scan this QR code to share your photos from the ntheo ceremony!",
           url: window.location.href,
         });
@@ -64,7 +64,7 @@ const QrGenerator = () => {
         aria-label="QR code for sharing photos from the event"
       >
         <Image
-          text={`${link}`}
+          text={`${link}/#media-upload`}
           options={{
             type: "image/jpeg",
             quality: 0.3,

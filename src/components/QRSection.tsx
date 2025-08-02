@@ -5,7 +5,7 @@ import QrGenerator from "./QrGenerator";
 
 const QRSection = () => {
   return (
-    <div className="bg-pink/4 py-16">
+    <div className="bg-pink/4 py-16" id="qr-section">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <div className="text-foreground mb-4 text-3xl font-semibold">
