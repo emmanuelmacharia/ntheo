@@ -1,4 +1,4 @@
-"use cleint";
+"use client";
 import { Camera, Heart, QrCode } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
