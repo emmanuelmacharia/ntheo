@@ -41,7 +41,7 @@ const QrGenerator = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Wanza x Kiangai Photo Sharing",
+          title: "Wanza <> Kiangai Photo Sharing",
           text: "Scan this QR code to share your photos from the ntheo ceremony!",
           url: window.location.href,
         });
