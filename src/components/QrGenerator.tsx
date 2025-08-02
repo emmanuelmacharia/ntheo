@@ -14,7 +14,7 @@ const QrGenerator = () => {
     if (typeof window !== "undefined") {
       setLink(`${window.location.origin}`);
     }
-  }, [link]);
+  }, []);
 
   const handleDownload = () => {
     const imgParent = document.getElementById("qr-image-wanza-kiangai")!;
