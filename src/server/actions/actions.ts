@@ -3,6 +3,8 @@ import { MUTATIONS, QUERIES } from "../db/queries";
 import type { DB_InviteType } from "../db/schema";
 import { inviteRsvpSchema, inviteUserSchema, userSchema } from "../models";
 import { cookies } from "next/headers";
+import { media } from "../db/mockMedia";
+import type { ClientUploadedFileData } from "uploadthing/types";
 
 const forceRefresh = async () => {
   const c = await cookies();
@@ -122,5 +124,64 @@ export const createUser = async (user: { email: string; role: string }) => {
   }
 
   await forceRefresh();
+  return result;
+};
+
+export const fetchMockMedia = async () => {
+  const result = await Promise.resolve(media);
+  return result;
+};
+
+export const createMedia = async (
+  files: ClientUploadedFileData<{ uploadedBy: string }>[],
+) => {
+  // no need to validate as it is a response from uploadthing
+  const dataToUpload: {
+    url: string;
+    type: string;
+    size: number;
+    tag: string;
+    featured: boolean;
+  }[] = [];
+
+  // Map to the data the db expects
+  files.map((file) => {
+    const uploadData = {
+      url: file.ufsUrl,
+      type: file.type,
+      size: file.size,
+      featured: false,
+      tag: file.name,
+    };
+
+    dataToUpload.push(uploadData);
+  });
+
+  // Iterate through each file uploaded and save it to the db;
+
+  const result = await Promise.all(dataToUpload.map(MUTATIONS.createMedia));
+
+  const errored = result.filter((res) => res instanceof Error);
+
+  if (errored.length > 0) {
+    const fileWord = errored.length === 1 ? "file" : "files";
+    return new Error(
+      `Failed to upload ${errored.length} ${fileWord}. Please try again.`,
+    );
+  }
+
+  const successCount = result.length - errored.length;
+  return `Successfully uploaded ${successCount} files`;
+};
+
+export const fetchMedia = async (featured = false) => {
+  const result = featured
+    ? await QUERIES.getFeaturedMedia()
+    : await QUERIES.getAllMedia();
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
   return result;
 };

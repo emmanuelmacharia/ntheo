@@ -12,7 +12,6 @@ const QrGenerator = () => {
 
   useEffect(() => {
     setLink(`${window.location.origin}`);
-    console.log(link);
   }, [link]);
 
   const handleDownload = () => {
@@ -45,7 +44,7 @@ const QrGenerator = () => {
           url: window.location.href,
         });
       } catch (error) {
-        console.log("Error sharing:", error);
+        console.error("Error sharing:", error);
       }
     } else {
       // Fallback for browsers without Web Share API

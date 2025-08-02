@@ -35,3 +35,13 @@ export const userSchema = z
     }),
   })
   .strict();
+
+export const mediSchema = z
+  .object({
+    url: z.string(),
+    type: z.string(),
+    size: z.number().positive(),
+    tag: z.string(),
+    featured: z.boolean().default(false),
+  })
+  .strict();

@@ -103,7 +103,7 @@ export const media_table = createTable("media", {
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   size: bigint("size", { mode: "number" }).notNull(), // Size in bytes
   featured: boolean("featured").default(false).notNull(), // to show up on the homescreen
-  tag: text("tag").default("UNTAGGED").notNull(), // for discoverability
+  tag: text("tag").default("UNTAGGED").notNull(), // for discoverability - we'll use this field for the image name; (if we do decide to use masonry, and figure out a way to pass the dimensions; we'll construct a string that shows these parameters)
 });
 
 export type DB_UserType = typeof user_table.$inferSelect;
