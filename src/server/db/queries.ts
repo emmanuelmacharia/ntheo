@@ -78,7 +78,7 @@ export const QUERIES = {
       return media;
     } catch (error) {
       console.error("Error fetching media", error);
-      return new Error("Failed to getch uploaded media");
+      return new Error("Failed to fetch uploaded media");
     }
   },
 
@@ -92,7 +92,7 @@ export const QUERIES = {
       return media;
     } catch (error) {
       console.error("Error fetching media", error);
-      return new Error("Failed to getch uploaded media");
+      return new Error("Failed to fetch uploaded media");
     }
   },
 };
@@ -196,9 +196,9 @@ export const MUTATIONS = {
   }): Promise<string | Error> => {
     try {
       const validatedInput = mediSchema.safeParse(input);
-
-      if (validatedInput.error) {
-        return new Error("Invalid input");
+      if (!validatedInput.success) {
+        console.error("Media validation failed:", validatedInput.error);
+        return new Error("Invalid media data provided");
       }
 
       const result = await db

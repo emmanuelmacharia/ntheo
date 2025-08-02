@@ -163,12 +163,15 @@ export const createMedia = async (
 
   const errored = result.filter((res) => res instanceof Error);
 
-  let errMsg = "";
-  if (errored.length) {
-    errMsg = `We had trouble uploading some of your files: ${errored.length} ${errored.length > 1 ? "files failed" : "file failed"}. Please try again`;
+  if (errored.length > 0) {
+    const fileWord = errored.length === 1 ? "file" : "files";
+    return new Error(
+      `Failed to upload ${errored.length} ${fileWord}. Please try again.`,
+    );
   }
 
-  return errMsg ? new Error(errMsg) : `Uploaded ${result.length} files`;
+  const successCount = result.length - errored.length;
+  return `Successfully uploaded ${successCount} files`;
 };
 
 export const fetchMedia = async (featured = false) => {

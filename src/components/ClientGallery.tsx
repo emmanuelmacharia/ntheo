@@ -7,15 +7,18 @@ import { Card, CardContent } from "./ui/card";
 import SharedImage from "./sharedImage";
 import SharedVideo from "./sharedVideo";
 
+const MEDIA_TYPES = {
+  IMAGE: "image",
+  VIDEO: "video",
+} as const;
+
 const ClientGallery = (props: { media: DB_MediaType[] }) => {
   const [viewMode, setViewMode] = useState<"grid" | "masonry">("grid"); // default to grid for now till we figure out sizes
-  const imageTypes = "image";
-  const videoTypes = "video";
 
   return (
     <div className="bg-background py-16">
       <div className="max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-AlignCenter mb-12">
+        <div className="mb-12 text-center">
           <h2 className="font-Bold text-burgundy mb-4">Our Gallery</h2>
           <p className="text-muted-foreground mb-8 text-xl">
             Beautiful moments captured from every perspective
@@ -69,10 +72,10 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
             {props.media.map((media) => (
               <div className="break-inside-avoid" key={media.id}>
                 <Card className="group hover:shadow-warm overflow-hidden border-0 bg-transparent shadow-none transition-all duration-300 hover:scale-105">
-                  {media.type.toLowerCase().includes(imageTypes) && (
+                  {media.type.toLowerCase().startsWith(MEDIA_TYPES.IMAGE) && (
                     <SharedImage photoConfig={{ image: media, viewMode }} />
                   )}
-                  {media.type.toLowerCase().includes(videoTypes) && (
+                  {media.type.toLowerCase().startsWith(MEDIA_TYPES.VIDEO) && (
                     <Suspense fallback={<p>Loading video...</p>}>
                       <SharedVideo videoConfig={{ video: media, viewMode }} />
                     </Suspense>

@@ -13,12 +13,12 @@ const sharedImage = (props: {
     <div
       className="relative max-h-[350px] w-full rounded-lg"
       style={{
-        height: viewMode === "masonry" ? "200px" : "200px",
+        height: "200px",
       }}
     >
       <Image
         src={image.url}
-        alt={`Photo taken at the ntheo`}
+        alt={image.tag || `Photo taken at the ntheo`}
         className="h-auto w-full object-cover"
         fill={true}
         style={{ objectFit: "cover" }}

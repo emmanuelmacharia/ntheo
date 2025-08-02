@@ -63,16 +63,16 @@ const useUploadThingInputProps = (...args: Input) => {
     const result = await $ut.startUpload(selectedFiles);
 
     if (result?.length) {
-      // TODO: persist in DB
       const dbTransactionResult = await createMedia(result);
       if (dbTransactionResult instanceof Error) {
         toast.message(`${dbTransactionResult.message}`, {
           style: { color: "#DA2C43" },
         });
+      } else {
+        toast.message(`${dbTransactionResult}`, {
+          style: { color: "#BE5103" },
+        });
       }
-      toast.message(`${dbTransactionResult}`, {
-        style: { color: "#BE5103" },
-      });
     }
   };
 
@@ -114,8 +114,6 @@ export function UploadV2() {
       {!uploading && (
         <div
           className="border-muted hover:bg-muted/50 cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors"
-          //   onDrop={handleDrop}
-          //   onDragOver={handleDragOver}
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
