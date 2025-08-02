@@ -118,7 +118,7 @@ export function UploadV2() {
         >
           <Upload className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
           <p className="text-foreground mb-2 text-lg font-medium">
-            Drop your photos here, or click to browse
+            Drop your photos and videos here, or click to browse
           </p>
           <p className="text-muted-foreground">
             Support for JPEG, PNG, WebP files

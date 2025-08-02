@@ -64,7 +64,7 @@ const QrGenerator = () => {
         aria-label="QR code for sharing photos from the event"
       >
         <Image
-          text={`${link}`}
+          text={`${link}/#media-upload`}
           options={{
             type: "image/jpeg",
             quality: 0.3,
