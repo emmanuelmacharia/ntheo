@@ -11,6 +11,7 @@ const InviteDetails = (props: { invite: DB_InviteType | Error }) => {
   const [rsvp, setRsvp] = useState("");
   const location =
     "https://maps.google.com/?q=-1.35863935947418,37.3537635803223"; // THIS IS STATIC; NEVER CHANGES
+  const isEveryoneInvite = props.invite.name.toLowerCase() === "everyone";
 
   useEffect(() => {
     if (props.invite instanceof Error) {
@@ -29,7 +30,7 @@ const InviteDetails = (props: { invite: DB_InviteType | Error }) => {
       )}
       {!(props.invite instanceof Error) && (
         <>
-          {props.invite.name.toLowerCase() !== "everyone" && (
+          {!isEveryoneInvite && (
             <div>
               <h2 className="text-burgundy -mt-2 mb-4 font-sans text-2xl">
                 You Are Cordially Invited
@@ -48,7 +49,7 @@ const InviteDetails = (props: { invite: DB_InviteType | Error }) => {
               </p>
             </div>
           )}
-          {props.invite.name.toLowerCase() === "everyone" && (
+          {isEveryoneInvite && (
             <div>
               <h2 className="text-burgundy -mt-2 mb-4 font-sans text-2xl">
                 Thank you for joining us

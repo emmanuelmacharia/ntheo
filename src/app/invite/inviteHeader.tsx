@@ -7,7 +7,12 @@ const InviteHeader = () => {
       <div className="bg-gold shadow-gold mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
         <Heart className="text-burnt-orange h-8 w-8" fill="currentColor" />
       </div>
-      <h1 className="text-primary-foreground mb-2 text-4xl font-bold">E|M</h1>
+      <h1 className="text-primary-foreground mb-2 text-4xl font-bold">
+        {" "}
+        <span aria-label="Wanza and Kiangai">
+          E<span aria-hidden="true">|</span>M
+        </span>
+      </h1>
       <p className="text-primary-foreground/80">Ntheo Ceremony</p>
     </div>
   );
