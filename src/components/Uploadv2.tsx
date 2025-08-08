@@ -3,8 +3,17 @@
 import { LoaderIcon, Upload } from "lucide-react";
 import { useUploadThing } from "./utils/uploadthing";
 import { useRef, useState } from "react";
-import { toast } from "sonner";
 import { createMedia } from "~/server/actions/actions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 type Input = Parameters<typeof useUploadThing>;
 
@@ -42,6 +51,17 @@ const getImageDimensions = (file: File): ImageDimenions | null => {
 
 const useUploadThingInputProps = (...args: Input) => {
   const $ut = useUploadThing(...args);
+  const [completionState, setCompletionState] = useState<{
+    isComplete: boolean;
+    title: string;
+    description: string;
+    error: boolean;
+  }>({
+    isComplete: false,
+    title: "",
+    description: "",
+    error: false,
+  });
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -65,15 +85,30 @@ const useUploadThingInputProps = (...args: Input) => {
     if (result?.length) {
       const dbTransactionResult = await createMedia(result);
       if (dbTransactionResult instanceof Error) {
-        toast.message(`${dbTransactionResult.message}`, {
-          style: { color: "#DA2C43" },
+        setCompletionState({
+          isComplete: true,
+          title: "We ran into an issue!",
+          description: dbTransactionResult.message,
+          error: true,
         });
       } else {
-        toast.message(`${dbTransactionResult}`, {
-          style: { color: "#BE5103" },
+        setCompletionState({
+          isComplete: true,
+          title: "Your upload was successful",
+          description: dbTransactionResult,
+          error: false,
         });
       }
     }
+  };
+
+  const resetCompletionState = () => {
+    setCompletionState({
+      isComplete: false,
+      title: "",
+      description: "",
+      error: false,
+    });
   };
 
   return {
@@ -83,23 +118,27 @@ const useUploadThingInputProps = (...args: Input) => {
       multiple: true,
     },
     isUploading: $ut.isUploading,
+    completionState,
+    resetCompletionState,
   };
 };
 
 export function UploadV2() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const { inputProps } = useUploadThingInputProps("imageUploader", {
-    onUploadBegin() {
-      setUploading(true);
-    },
-    onClientUploadComplete(files) {
-      setUploading(false);
-    },
-    onUploadError() {
-      setUploading(false);
-    },
-  });
+  const { inputProps, completionState, resetCompletionState } =
+    useUploadThingInputProps("imageUploader", {
+      onUploadBegin() {
+        setUploading(true);
+      },
+      onClientUploadComplete(files) {
+        setUploading(false);
+      },
+      onUploadError() {
+        setUploading(false);
+      },
+    });
+
   return (
     <>
       {uploading && (
@@ -132,6 +171,29 @@ export function UploadV2() {
           />
         </div>
       )}
+
+      <AlertDialog open={completionState.isComplete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{completionState.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {completionState.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {completionState.error && (
+              <AlertDialogCancel onClick={resetCompletionState}>
+                Try again later
+              </AlertDialogCancel>
+            )}
+            {!completionState.error && (
+              <AlertDialogAction onClick={resetCompletionState}>
+                Done
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
