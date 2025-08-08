@@ -26,7 +26,7 @@ const InviteLayout = ({
             <Card className="bg-white/90 backdrop-blur-sm">
               <CardContent className="px-4 py-2">
                 <h3 className="text-burgundy mb-2 font-mono text-lg font-semibold">
-                  wanza {"<>"} kiangai
+                  wanza|kiangai
                 </h3>
                 <p className="text-burnt-orange italic">
                   Your presence makes our joy complete
