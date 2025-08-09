@@ -51,7 +51,7 @@ const ClientGallery = (props: { media: DB_MediaType[] }) => {
                     <Users2 className="text-primary h-8 w-8" />
                     <div>
                       <h3 className="text-foreground text-lg font-semibold">
-                        {props.media.length} Photos and Videos shared
+                        Last {props.media.length} Photos and Videos shared
                       </h3>
                       <p className="text-muted-foreground">
                         From our wonderful guests

@@ -185,3 +185,14 @@ export const fetchMedia = async (featured = false) => {
 
   return result;
 };
+
+export const fetchLimitedMedia = async () => {
+  const result = await QUERIES.getLastTwentyMedia();
+  console.log(result);
+
+  if (result instanceof Error) {
+    return new Error(result.message);
+  }
+
+  return result;
+};

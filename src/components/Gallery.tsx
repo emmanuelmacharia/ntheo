@@ -1,9 +1,9 @@
-import { fetchMedia } from "~/server/actions/actions";
+import { fetchLimitedMedia } from "~/server/actions/actions";
 import ClientGallery from "./ClientGallery";
 import { Clapperboard } from "lucide-react";
 
 const Gallery = async () => {
-  const media = await fetchMedia();
+  const media = await fetchLimitedMedia();
 
   if (media instanceof Error) {
     return (
