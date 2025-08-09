@@ -95,6 +95,20 @@ export const QUERIES = {
       return new Error("Failed to fetch uploaded media");
     }
   },
+
+  getLastTwentyMedia: async function (): Promise<DB_MediaType[] | [] | Error> {
+    try {
+      const media = await db
+        .select()
+        .from(media_table)
+        .orderBy(desc(media_table.createdAt))
+        .limit(20);
+      return media;
+    } catch (error) {
+      console.error("Error fetching media", error);
+      return new Error("Failed to fetch uploaded media");
+    }
+  },
 };
 
 export const MUTATIONS = {
