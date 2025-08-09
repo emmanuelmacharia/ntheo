@@ -13,7 +13,7 @@ const sharedImage = (props: {
     <div
       className="relative max-h-[350px] w-full rounded-lg"
       style={{
-        height: "200px",
+        height: "350px",
       }}
     >
       <Image
