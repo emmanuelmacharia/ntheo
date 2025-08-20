@@ -14,7 +14,7 @@ export const ourFileRouter = {
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: "512MB",
+      maxFileSize: "1024MB",
       maxFileCount: 200,
     },
     video: {
@@ -22,7 +22,7 @@ export const ourFileRouter = {
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: "512MB",
+      maxFileSize: "1024MB",
       maxFileCount: 200,
     },
   })
