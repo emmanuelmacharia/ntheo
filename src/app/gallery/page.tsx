@@ -61,13 +61,13 @@ export default async function GalleryPage() {
             </h1>
 
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <a
+              <Link
                 href="/gallery/play"
                 className="text-burgundy inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white/90"
               >
                 <Play className="h-3.5 w-3.5 fill-current" />
                 Play the day
-              </a>
+              </Link>
               <p className="text-sm text-white/75">
                 {total} photos and videos, in the order we remember them
               </p>

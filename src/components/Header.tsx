@@ -1,9 +1,12 @@
-"use client";
 import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
-import { LaptopMinimalCheck } from "lucide-react";
-import React from "react";
+import { LayoutDashboard, LaptopMinimalCheck } from "lucide-react";
+import Link from "next/link";
+import { authUser } from "~/server/actions/auth";
 
-const Header = () => {
+const Header = async () => {
+  const user = await authUser();
+  const canAccessAdmin = user?.role === "ADMIN" || user?.role === "CURATOR";
+
   return (
     <header
       aria-label="Main site header"
@@ -24,7 +27,18 @@ const Header = () => {
         </div>
       </SignedOut>
       <SignedIn>
-        <UserButton />
+        <div className="flex items-center gap-3">
+          {canAccessAdmin && (
+            <Link
+              href="/admin/curate"
+              className="flex items-center gap-2 rounded-md bg-white/15 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <LayoutDashboard className="size-4" aria-hidden="true" />
+              Admin panel
+            </Link>
+          )}
+          <UserButton />
+        </div>
       </SignedIn>
     </header>
   );

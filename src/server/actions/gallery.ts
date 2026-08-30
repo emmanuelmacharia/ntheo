@@ -292,7 +292,7 @@ export async function moveMedia(id: number, direction: "up" | "down") {
   const scope =
     item.chapterId === null
       ? and(
-          eq(media_table.eventId, item.eventId as number),
+          eq(media_table.eventId, item.eventId!),
           isNull(media_table.chapterId),
         )
       : eq(media_table.chapterId, item.chapterId);
