@@ -15,7 +15,11 @@ type Params = { params: Promise<{ id: string }> };
  */
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
-  const item = await GALLERY.getMediaItem(Number(id));
+  const mediaId = Number(id);
+  if (!Number.isSafeInteger(mediaId) || mediaId <= 0)
+    return { title: "Not found" };
+
+  const item = await GALLERY.getMediaItem(mediaId);
   if (!item) return { title: "Not found" };
 
   // No timestamp in the title. Capture times order the gallery but are not
@@ -38,13 +42,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function MediaPage({ params }: Params) {
   const { id } = await params;
-  const context = await GALLERY.getChapterFor(Number(id));
+  const mediaId = Number(id);
+  if (!Number.isSafeInteger(mediaId) || mediaId <= 0) notFound();
+
+  const context = await GALLERY.getChapterFor(mediaId);
 
   if (!context) {
-    const single = await GALLERY.getMediaItem(Number(id));
+    const single = await GALLERY.getMediaItem(mediaId);
     if (!single) notFound();
     return <StandaloneViewer items={[single]} startId={single.id} />;
   }
 
-  return <StandaloneViewer items={context.items} startId={Number(id)} />;
+  return <StandaloneViewer items={context.items} startId={mediaId} />;
 }
