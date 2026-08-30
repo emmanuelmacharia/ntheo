@@ -132,26 +132,48 @@ export const fetchMockMedia = async () => {
   return result;
 };
 
+/** What the browser measured about a file, alongside the UploadThing result. */
+export type UploadedMediaMetadata = {
+  width?: number;
+  height?: number;
+  lqip?: string;
+  /** "YYYY-MM-DDTHH:mm:ss", the wall clock the camera showed, no timezone. */
+  capturedAt?: string;
+  captureSource?: "exif" | "mp4" | "filename" | "none";
+  durationSeconds?: number;
+  posterUrl?: string;
+};
+
 export const createMedia = async (
-  files: ClientUploadedFileData<{ uploadedBy: string }>[],
+  files: (ClientUploadedFileData<{ uploadedBy: string }> & {
+    meta?: UploadedMediaMetadata;
+  })[],
 ) => {
   // no need to validate as it is a response from uploadthing
-  const dataToUpload: {
-    url: string;
-    type: string;
-    size: number;
-    tag: string;
-    featured: boolean;
-  }[] = [];
+  const dataToUpload: Parameters<typeof MUTATIONS.createMedia>[0][] = [];
 
   // Map to the data the db expects
   files.map((file) => {
+    const meta = file.meta ?? {};
+
+    // Capture times are stored as a wall clock labelled UTC, so the string is
+    // parsed as UTC rather than in the server's own timezone.
+    const capturedAt = meta.capturedAt ? new Date(`${meta.capturedAt}Z`) : undefined;
+
     const uploadData = {
       url: file.ufsUrl,
       type: file.type,
       size: file.size,
       featured: false,
       tag: file.name,
+      width: meta.width,
+      height: meta.height,
+      lqip: meta.lqip,
+      capturedAt:
+        capturedAt && !Number.isNaN(capturedAt.getTime()) ? capturedAt : undefined,
+      captureSource: meta.captureSource ?? "none",
+      durationSeconds: meta.durationSeconds,
+      posterUrl: meta.posterUrl,
     };
 
     dataToUpload.push(uploadData);

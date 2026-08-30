@@ -207,6 +207,13 @@ export const MUTATIONS = {
     size: number;
     tag: string;
     featured: boolean;
+    width?: number;
+    height?: number;
+    lqip?: string;
+    capturedAt?: Date;
+    captureSource?: "exif" | "mp4" | "filename" | "none";
+    durationSeconds?: number;
+    posterUrl?: string;
   }): Promise<string | Error> => {
     try {
       const validatedInput = mediSchema.safeParse(input);
@@ -223,6 +230,17 @@ export const MUTATIONS = {
           size: validatedInput.data.size,
           featured: validatedInput.data.featured,
           tag: validatedInput.data.tag,
+          width: validatedInput.data.width,
+          height: validatedInput.data.height,
+          lqip: validatedInput.data.lqip,
+          capturedAt: validatedInput.data.capturedAt,
+          captureSource: validatedInput.data.captureSource,
+          durationSeconds: validatedInput.data.durationSeconds,
+          posterUrl: validatedInput.data.posterUrl,
+          // A tile with no shape cannot be laid out, so anything the browser
+          // could not measure stays pending for the backfill to pick up.
+          metadataStatus:
+            validatedInput.data.width && validatedInput.data.height ? "ok" : "pending",
         })
         .$returningId();
 
