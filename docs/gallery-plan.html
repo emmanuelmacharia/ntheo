@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ntheo gallery rearchitecture, plan and decisions</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-0: #f5f4f1;
+    --surface-1: #fcfcfb;
+    --surface-2: #efede8;
+    --border:    #dedbd3;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #7c7a74;
+    --series-1:  #be5103;
+    --deemph:    #b3b0a7;
+    --accent:    #660033;
+    --gold:      #efbf04;
+    --ok:        #1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-0: #131312;
+      --surface-1: #1a1a19;
+      --surface-2: #232320;
+      --border:    #35342f;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8e8c83;
+      --series-1:  #d0672e;
+      --deemph:    #55534c;
+      --accent:    #c6517d;
+      --gold:      #efbf04;
+      --ok:        #199e70;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.02em; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin: 56px 0 16px; font-weight: 600;
+  }
+  h3 { font-size: 19px; margin: 32px 0 8px; letter-spacing: -0.01em; }
+  p { margin: 0 0 14px; color: var(--text-secondary); }
+  strong { color: var(--text-primary); font-weight: 600; }
+  code {
+    font: 13px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    background: var(--surface-2); padding: 1px 5px; border-radius: 4px;
+    color: var(--text-primary);
+  }
+  a { color: var(--accent); }
+
+  .lede { font-size: 18px; color: var(--text-secondary); margin-bottom: 4px; }
+  .meta { font-size: 13px; color: var(--text-muted); margin-bottom: 40px; }
+  .meta span { margin-right: 16px; }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 24px; margin: 20px 0;
+  }
+  .callout { border-left: 3px solid var(--series-1); }
+  .callout-ok { border-left: 3px solid var(--ok); }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th {
+    text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted);
+    padding: 8px 12px 8px 0; border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border);
+    color: var(--text-secondary); vertical-align: top;
+  }
+  td:first-child { color: var(--text-primary); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; padding-right: 20px; }
+
+  /* chart */
+  .viz-root { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 20px 0; }
+  .viz-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .viz-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .bars { display: grid; grid-template-columns: 116px 1fr; row-gap: 6px; align-items: center; }
+  .bar-label { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; padding-right: 12px; }
+  .bar-label b { color: var(--text-primary); font-weight: 600; }
+  .bar-track { display: flex; align-items: center; gap: 10px; }
+  .bar {
+    height: 18px; border-radius: 0 4px 4px 0; background: var(--series-1);
+    transition: opacity .12s;
+  }
+  .bar.out { background: var(--deemph); }
+  .bar-val { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+  .bar-row:hover .bar { opacity: .78; }
+  .weekend-note {
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text-muted);
+  }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: baseline; margin-right: 5px; }
+
+  details { margin-top: 14px; font-size: 13px; }
+  summary { cursor: pointer; color: var(--text-muted); }
+
+  ol.build { padding-left: 0; list-style: none; counter-reset: step; }
+  ol.build li {
+    counter-increment: step; position: relative; padding: 12px 0 12px 44px;
+    border-bottom: 1px solid var(--border); color: var(--text-secondary);
+  }
+  ol.build li::before {
+    content: counter(step); position: absolute; left: 0; top: 12px;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2);
+    color: var(--text-primary); font-size: 12px; font-weight: 600;
+    display: grid; place-items: center;
+  }
+  ol.build li b { color: var(--text-primary); font-weight: 600; }
+  .gate { color: var(--series-1); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+
+  .tree { font: 13px/1.9 ui-monospace, Menlo, Consolas, monospace; color: var(--text-secondary); white-space: pre; overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Ntheo gallery rearchitecture</h1>
+  <p class="lede">Replacing the homepage gallery with a browsable archive of the wedding weekend, ordered by when photos were actually taken.</p>
+  <p class="meta">
+    <span>Plan drafted 25 August 2026</span>
+    <span>343 media items, 1.39&nbsp;GB</span>
+    <span>Status: built, pending one poster-capture run</span>
+  </p>
+
+  <h2>The defect</h2>
+
+  <p>The database has never known the shape of the media it stores. <code>media_table</code> holds a URL, a MIME type, a byte size, a boolean, and a free-text tag. It has no width, no height, no capture time, no duration, and no poster frame.</p>
+
+  <p>Everything people complain about descends from that one gap. <code>sharedImage.tsx</code> forces every photo into a hardcoded 200px box with <code>object-fit: cover</code>, so a portrait shot loses its subject to the crop. The masonry toggle in <code>ClientGallery.tsx</code> has never worked, because packing a masonry layout requires aspect ratios the database cannot supply. Videos render as grey rectangles. The gallery shows the 20 most recent uploads and offers no route to the other 323.</p>
+
+  <div class="card callout">
+    <p style="margin:0"><strong>So the work is ordered: metadata first, layout second, experience third.</strong> No interface work starts before the backfill lands, because every layout decision depends on dimensions being correct.</p>
+  </div>
+
+  <h2>What the library actually contains</h2>
+
+  <table>
+    <thead><tr><th>Type</th><th class="num">Count</th><th class="num">Average</th><th class="num">Largest</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>image/jpeg</td><td class="num">301</td><td class="num">2.18 MB</td><td class="num">6.77 MB</td><td>EXIF intact on every one sampled</td></tr>
+      <tr><td>video/quicktime</td><td class="num">27</td><td class="num">13.35 MB</td><td class="num">114 MB</td><td>declared as <code>video/mp4</code> in the markup, which is wrong</td></tr>
+      <tr><td>image/x-nikon-nef</td><td class="num">5</td><td class="num">20.58 MB</td><td class="num">21.35 MB</td><td>no browser renders these</td></tr>
+      <tr><td>image/heic</td><td class="num">5</td><td class="num">4.53 MB</td><td class="num">7.37 MB</td><td>Safari only</td></tr>
+      <tr><td>video/mp4</td><td class="num">4</td><td class="num">44.04 MB</td><td class="num">53.92 MB</td><td>one has <code>moov</code> at the end and cannot stream</td></tr>
+      <tr><td>image/png</td><td class="num">1</td><td class="num">6.40 MB</td><td class="num">6.40 MB</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Ten images cannot render in a browser at all.</strong> Five Nikon raw files and five HEIC files are broken tiles today, and no amount of layout work fixes them. The five NEFs are 21&nbsp;MB each, which means somebody brought a real camera, which usually means they are the best photographs in the set.</p>
+
+  <p><code>featured</code> is <code>false</code> on all 343 rows. The flag has never been used, so <code>getFeaturedMedia()</code> returns an empty array and any curation built on it starts from zero.</p>
+
+  <h2>When it was captured</h2>
+
+  <div class="viz-root">
+    <div class="viz-title">Capture dates, sampled photos</div>
+    <div class="viz-sub">EXIF DateTimeOriginal, 90 JPEGs sampled at random from 301</div>
+
+    <div class="bars">
+      <div style="display:contents">
+        <div class="bar-label">Sat <b>2 Aug</b></div>
+        <div class="bar-track"><div class="bar out" style="width:14%" title="2 Aug 2025: 7 photos, hours 14 to 16"></div><span class="bar-val">7</span></div>
+      </div>
+      <div style="display:contents">
+        <div class="bar-label">Sat <b>9 Aug</b></div>
+        <div class="bar-track"><div class="bar" style="width:100%" title="9 Aug 2025: 50 photos, hours 12 to 18"></div><span class="bar-val">50</span></div>
+      </div>
+      <div style="display:contents">
+        <div class="bar-label">Sun <b>10 Aug</b></div>
+        <div class="bar-track"><div class="bar" style="width:50%" title="10 Aug 2025: 25 photos, hours 00, 13, 15, 20"></div><span class="bar-val">25</span></div>
+      </div>
+      <div style="display:contents">
+        <div class="bar-label">Mon <b>11 Aug</b></div>
+        <div class="bar-track"><div class="bar" style="width:12%" title="11 Aug 2025: 6 photos, hours 09 and 16"></div><span class="bar-val">6</span></div>
+      </div>
+      <div style="display:contents">
+        <div class="bar-label">Wed <b>20 Aug</b></div>
+        <div class="bar-track"><div class="bar out" style="width:4%" title="20 Aug 2025: 2 photos, hours 11 and 15"></div><span class="bar-val">2</span></div>
+      </div>
+    </div>
+
+    <div class="weekend-note">
+      <span class="swatch" style="background:var(--series-1)"></span>The Wedding Weekend, 9 to 11 August, is 81 of the 90 sampled photos, about <strong>271 of 301</strong> once extrapolated.
+      <span class="swatch" style="background:var(--deemph);margin-left:14px"></span>2 August and 20 August fall outside it, roughly 30 photos.
+    </div>
+
+    <details>
+      <summary>Data table</summary>
+      <table>
+        <thead><tr><th>Date</th><th>Day</th><th class="num">Sampled</th><th>Hours covered</th></tr></thead>
+        <tbody>
+          <tr><td>2025-08-02</td><td>Saturday</td><td class="num">7</td><td>14, 15, 16</td></tr>
+          <tr><td>2025-08-09</td><td>Saturday</td><td class="num">50</td><td>12, 13, 14, 15, 16, 17, 18</td></tr>
+          <tr><td>2025-08-10</td><td>Sunday</td><td class="num">25</td><td>00, 13, 15, 20</td></tr>
+          <tr><td>2025-08-11</td><td>Monday</td><td class="num">6</td><td>09, 16</td></tr>
+          <tr><td>2025-08-20</td><td>Wednesday</td><td class="num">2</td><td>11, 15</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+
+  <p>Uploads tell a completely different story: 21 files arrived on 2 August, 131 on 11 August, and 166 on 20 August, weeks after the event. Sorting by upload time does not approximate the day, it shatters it. That single comparison is why capture time became the spine of the whole design.</p>
+
+  <p>The <code>00</code> hour on 10 August is the reception on the 9th still going, which is why event days run 04:00 to 04:00 instead of midnight to midnight.</p>
+
+  <div class="card callout-ok">
+    <p style="margin:0">Two findings made the backfill much cheaper than expected. The CDN answers <strong>HTTP range requests</strong>, so we read 128&nbsp;KB per file instead of whole originals. And each JPEG carries an <strong>embedded thumbnail inside its EXIF block</strong>, already within those bytes, which becomes the blur placeholder for free. The full pass costs about 22&nbsp;MB rather than 1.39&nbsp;GB.</p>
+  </div>
+
+  <h2>Domain model</h2>
+
+  <p>Three levels, defined in <a href="../CONTEXT.md">CONTEXT.md</a>. An <strong>Event</strong> is an occasion whose media belongs together. A <strong>Chapter</strong> is a named, ordered stretch of one Event. A <strong>Media Item</strong> is one photo or one video.</p>
+
+  <div class="tree">Saturday 9 August          Event      319 items, the day
+  Midday                   Chapter     27   12:00 onward, real timestamps
+  Early afternoon          Chapter     10
+  Afternoon                Chapter    119   the ceremony
+  More from the day        Chapter    163   of the day, timestamps rewritten
+Saturday 2 August          Event       22 items, a different occasion</div>
+
+  <p>Chapters are proposed automatically from 40-minute gaps in capture time and then renamed by hand. The gallery is fully usable before anyone renames anything.</p>
+
+  <h2>Decisions</h2>
+
+  <table>
+    <thead><tr><th style="width:30%">Decision</th><th style="width:26%">Chosen</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Ordering spine</td><td>Capture time from file metadata</td><td>Uploads arrived up to three weeks late and in bursts. See ADR-0001.</td></tr>
+      <tr><td>Missing capture time</td><td>No fabricated time</td><td>Upload time would file a photo three weeks from the moment it shows. Undated Items get no clock label.</td></tr>
+      <tr><td>Day boundary</td><td>04:00 to 04:00</td><td>Keeps the reception intact instead of splitting it at midnight.</td></tr>
+      <tr><td>Where metadata comes from</td><td>Inferred from the stored files</td><td>343 items already exist with none of it. See ADR-0002.</td></tr>
+      <tr><td>Backfill location</td><td>Local resumable script</td><td>Netlify functions time out long before 343 files finish.</td></tr>
+      <tr><td>Grid layout</td><td>Justified rows</td><td>Masonry orders top-to-bottom per column, which scrambles a chronological gallery. See ADR-0004.</td></tr>
+      <tr><td>Layout math</td><td>Server sends data, client packs rows</td><td>Only the client knows the real container width. Aspect ratios from the database reserve space before any image loads.</td></tr>
+      <tr><td>Pagination</td><td>Cursor on (capturedAt, id)</td><td>343 items today, but the cursor costs nothing and the ordering key already exists.</td></tr>
+      <tr><td>Placeholders</td><td>Base64 LQIP</td><td><code>next/image</code> speaks it natively, no client library. Source bytes come free from the EXIF thumbnail.</td></tr>
+      <tr><td>Video posters</td><td>Captured in the browser</td><td>No ffmpeg installed, and a transcoding service is a monthly bill for a one-day archive. See ADR-0003.</td></tr>
+      <tr><td>Video autoplay</td><td>Muted, in view, capped at 8 seconds</td><td>30 of 31 files have <code>moov</code> at the front, so they stream. Cost is playback seconds times bitrate, not file size.</td></tr>
+      <tr><td>The 43&nbsp;MB non-streaming file</td><td>Poster only, tap to play</td><td>Rewriting one file's atom order is not worth a pipeline.</td></tr>
+      <tr><td>Raw and HEIC files</td><td>Extract a Display Copy</td><td>Ten unrenderable images, including the five best cameras in the set. Original always kept.</td></tr>
+      <tr><td>Covers</td><td>Middle of the densest Moment</td><td>No likes or views exist anywhere in the app. Burst density is the only signal of what mattered. Ties break on pixel count.</td></tr>
+      <tr><td>Curation workflow</td><td>Auto-propose, then edit</td><td>Hand-sorting 343 photos is work only the owner can do. Clustering gets it 90% right first.</td></tr>
+      <tr><td>Routing</td><td><code>/gallery</code> with intercepting routes</td><td>Every item gets a real shareable URL, while in-app taps stay modals.</td></tr>
+      <tr><td>Access</td><td>Public for now</td><td>Deliberate. Gating comes later and is out of scope here.</td></tr>
+      <tr><td>Metadata on GPS</td><td>Stored, never rendered</td><td>Coordinates are in the EXIF. Publishing them on a public page is a different exposure from publishing the photo.</td></tr>
+      <tr><td>Clock labels</td><td><strong>Removed entirely</strong></td><td>Changed during the build. A timestamp on a wedding photo is clutter, and readers assume it means when it was sent. Capture time still orders everything, invisibly. See ADR-0006.</td></tr>
+      <tr><td>Viewer backdrop</td><td><strong>Light, with the image's own colours as a wash</strong></td><td>Changed during the build. A black sheet read as a separate app and fought the photographs. See ADR-0007.</td></tr>
+      <tr><td>Display type</td><td>Fraunces, an editorial serif</td><td>Geist renders headings as generic product type. Headings are near-black per the app's existing convention, with gold and burnt orange as the accents.</td></tr>
+      <tr><td>Cover photograph</td><td>Chosen by hand</td><td>The Cover picker finds a reasonable frame, but the image that opens the archive is an editorial call.</td></tr>
+      <tr><td>Database handle</td><td>A pool</td><td>Forced. One long-lived connection with no reconnect kept killing the dev server. See ADR-0008.</td></tr>
+      <tr><td>Old gallery</td><td>Deleted</td><td>Keeping it means maintaining the 200px crop bug in a second place.</td></tr>
+      <tr><td>Upload cap</td><td>512&nbsp;MB down to 50&nbsp;MB</td><td>Still accepts 30 of the 31 existing videos. The 512&nbsp;MB ceiling is how a 114&nbsp;MB file got in.</td></tr>
+      <tr><td>Pinch to zoom</td><td>Excluded</td><td>Fights the swipe gesture on touch. Double-tap zoom covers the need.</td></tr>
+      <tr><td>Hourly story rail</td><td>Cut</td><td>Play the day covers it. The burst-density picker survives as the Cover chooser.</td></tr>
+      <tr><td>What counts as "the day"</td><td><strong>Everything from 9 August onward</strong></td><td>Revised after launch. Sharing a photo onward rewrites its EXIF date, so post-9th timestamps record a re-save, not a shutter. The giveaway was 57 photographs stamped inside three minutes. See ADR-0009, which supersedes the weekend grouping and the 04:00 boundary.</td></tr>
+      <tr><td>Event and Chapter storage</td><td>One table, self-referencing</td><td>Forced. The database caps at 10 tables and is shared with another project. See ADR-0005.</td></tr>
+      <tr><td>Migration tooling</td><td>Hand-written SQL, applied by a script</td><td>The repo has no migration history, so <code>drizzle-kit generate</code> emits CREATE TABLE over three populated tables.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Schema</h2>
+
+  <p>One new table. <code>ntheo_event</code> holds <code>id, parentId, title, slug, startsAt, endsAt, sortOrder, coverMediaId, visible</code>. A row with <code>parentId</code> null is an Event. A row with a <code>parentId</code> is a Chapter of that Event.</p>
+
+  <div class="card callout">
+    <p style="margin:0 0 10px"><strong>This started as two tables and became one.</strong> Creating <code>ntheo_chapter</code> failed against the live database:</p>
+    <p style="margin:0 0 10px"><code>The max number of tables allowed for this Database has been reached.</code></p>
+    <p style="margin:0">The database caps at 10 tables and is shared with an unrelated project that owns 5 <code>mosaic_*</code> tables. Ntheo's 5 fill the rest. Paying for a larger plan to store roughly a dozen rows was not worth it, so Chapters became a self-reference. See ADR-0005. Anything else Ntheo needs a table for will hit the same wall.</p>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:32%">New column on ntheo_media</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>width</code>, <code>height</code></td><td>Orientation already applied, not raw header values</td></tr>
+      <tr><td><code>capturedAt</code></td><td>Nullable. The timeline spine</td></tr>
+      <tr><td><code>captureSource</code></td><td><code>exif</code>, <code>mp4</code>, <code>filename</code>, or <code>none</code>, so provenance stays auditable</td></tr>
+      <tr><td><code>lqip</code></td><td>Base64 blur placeholder, roughly 600 bytes</td></tr>
+      <tr><td><code>displayUrl</code></td><td>Display Copy for raw and HEIC. Null means the original is fine</td></tr>
+      <tr><td><code>posterUrl</code>, <code>durationSeconds</code>, <code>streamable</code></td><td>Video playback</td></tr>
+      <tr><td><code>originalFilename</code></td><td>From <code>Content-Disposition</code>. Last-resort date source</td></tr>
+      <tr><td><code>gpsLat</code>, <code>gpsLng</code></td><td>Stored, never rendered</td></tr>
+      <tr><td><code>eventId</code>, <code>chapterId</code>, <code>sortOrder</code></td><td>Curation</td></tr>
+      <tr><td><code>visible</code></td><td>Hide without deleting a guest's upload</td></tr>
+      <tr><td><code>metadataStatus</code></td><td><code>pending</code>, <code>ok</code>, or <code>failed</code>. Makes the backfill resumable</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card callout">
+    <p style="margin:0"><strong>The orientation trap.</strong> JPEG header dimensions are recorded before rotation. A phone portrait commonly reports 4032x3024 with orientation 6 and actually displays as 3024x4032. Writing raw header values would hand justified rows the wrong aspect ratio for a large share of the library and rebuild the cropping bug behind a new route. Orientations 5 through 8 swap width and height at write time.</p>
+  </div>
+
+  <h2>Backfill</h2>
+
+  <h3>Stage 1, probe</h3>
+  <p>Range-fetch 128&nbsp;KB per file, 343 files, about 22&nbsp;MB total. Images give up EXIF capture time, dimensions, orientation, GPS, and the embedded thumbnail that <code>sharp</code> downscales into the LQIP. Videos give up duration, <code>creation_time</code>, and whether <code>moov</code> sits at the front.</p>
+
+  <h3>Stage 2, display copies</h3>
+  <p>The 5 NEF and 5 HEIC files get their embedded JPEG previews extracted and uploaded through <code>UTApi</code> into <code>displayUrl</code>. A failure sets <code>visible = false</code> rather than shipping a broken tile. This needs <code>UPLOADTHING_TOKEN</code> added to <code>src/env.js</code>, where it is currently missing despite being present in <code>.env</code>.</p>
+
+  <h3>Stage 3, posters</h3>
+  <p>An admin page loads each video, seeks to about one second, paints to a canvas, and uploads the frame. Viable because the CDN sends <code>Access-Control-Allow-Origin: *</code>, which leaves the canvas untainted. It also returns true <code>videoWidth</code> and <code>videoHeight</code>, which matters because parsing <code>tkhd</code> out of the QuickTime files returned nothing usable.</p>
+
+  <h3>Stage 4, clustering</h3>
+  <p>Event days bounded at 04:00. Chapters split on 40-minute gaps. Covers chosen from the middle of the densest Moment, ties broken on pixel count. Everything produced here is a proposal that can be renamed and reordered.</p>
+
+  <h2>Routes and components</h2>
+
+  <div class="tree">/gallery                      justified rows, cursor-paginated
+/gallery/[id]                 full page, real URL, OG tags
+/gallery/@modal/(.)[id]       intercepted, modal on in-app tap
+/gallery/play                 StoryPlayer
+/admin/curate                 rename, reorder, hide, feature
+/admin/backfill               one-time poster capture</div>
+
+  <p><code>JustifiedGrid</code> packs rows against the real container width using aspect ratios from the database, so space is reserved before a byte downloads. <code>MediaTile</code> renders LQIP then image, or poster then video. <code>VideoTile</code> autoplays muted in view, stops at 8 seconds, allows two players at once, and pauses off-screen. <code>MediaViewer</code> handles keyboard, swipe, double-tap zoom, download, share, and preloads two items either side. <code>StoryPlayer</code> takes any list of Media Items and runs 4 seconds per image, 10 second video clips, and a title card between chapters, muted with an unmute control.</p>
+
+  <p>Deleted: <code>Gallery.tsx</code>, <code>ClientGallery.tsx</code>, <code>sharedImage.tsx</code>, <code>sharedVideo.tsx</code>. The homepage keeps one justified row linking to <code>/gallery</code>.</p>
+
+  <h2>Build order</h2>
+
+  <ol class="build">
+    <li><b>Schema migration</b> and <code>UPLOADTHING_TOKEN</code> in <code>env.js</code>. <span class="gate" style="color:var(--ok)">done, 343 rows intact</span></li>
+    <li><b>Backfill stages 1 and 2</b>, verified against all 343 rows.</li>
+    <li><b>Admin poster page</b>, stage 3. <span class="gate">built, needs one run at /admin/backfill</span></li>
+    <li><b>Clustering</b>, stage 4. Events and Chapters exist from here on.</li>
+    <li><b>JustifiedGrid and /gallery</b> with cursor pagination. <span class="gate" style="color:var(--ok)">done</span></li>
+    <li><b>MediaViewer</b> and the intercepting routes.</li>
+    <li><b>StoryPlayer</b> and play the day.</li>
+    <li><b>Curator UI</b> at <code>/admin/curate</code>.</li>
+    <li><b>Delete the old gallery</b>, add the homepage teaser row.</li>
+    <li><b>Upload hardening</b>: 50&nbsp;MB cap, dimensions and poster captured in the browser at upload.</li>
+  </ol>
+
+  <h2>Risks</h2>
+
+  <p><strong>Netlify image optimisation.</strong> 343 originals at 2 to 7&nbsp;MB routed through <code>next/image</code> is real transform volume against the quota. If it bites, generate fixed-width copies during the backfill and serve them straight from the CDN.</p>
+
+  <p><strong>The CORS header is not ours.</strong> Poster generation depends on UploadThing sending <code>Access-Control-Allow-Origin: *</code>. If that ever tightens, ffmpeg becomes the fallback for existing videos.</p>
+
+  <p><strong>The database is full.</strong> 10 of 10 tables used, half of them belonging to another project. Every future Ntheo feature needing storage has to reuse an existing table or displace a <code>mosaic_*</code> one. Splitting the projects into separate databases is the real fix whenever it becomes worth doing.</p>
+
+  <p><strong>Curation is owner time, not build time.</strong> Clustering gets the structure roughly right on its own, but naming chapters and starring the good photographs is work only the owner can do. The gallery works chronologically before any of it happens.</p>
+
+</main>
+</body>
+</html>

@@ -13,6 +13,7 @@ export const env = createEnv({
     SINGLE_STORE_HOST: z.string().min(1),
     SINGLE_STORE_PORT: z.string(),
     SINGLE_STORE_DATABASE_NAME: z.string(),
+    UPLOADTHING_TOKEN: z.string().min(1),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -39,6 +40,7 @@ export const env = createEnv({
     SINGLE_STORE_HOST: process.env.SINGLE_STORE_HOST,
     SINGLE_STORE_PORT: process.env.SINGLE_STORE_PORT,
     SINGLE_STORE_DATABASE_NAME: process.env.SINGLE_STORE_DATABASE_NAME,
+    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

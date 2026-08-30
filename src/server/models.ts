@@ -43,5 +43,14 @@ export const mediSchema = z
     size: z.number().positive(),
     tag: z.string(),
     featured: z.boolean().default(false),
+    // Read in the browser at upload time so new media never needs the backfill.
+    // See src/lib/media-metadata.ts and docs/adr/0002.
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    lqip: z.string().optional(),
+    capturedAt: z.date().optional(),
+    captureSource: z.enum(["exif", "mp4", "filename", "none"]).default("none"),
+    durationSeconds: z.number().int().positive().optional(),
+    posterUrl: z.string().optional(),
   })
   .strict();

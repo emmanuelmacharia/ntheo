@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist } from "next/font/google";
+import { Geist, Fraunces } from "next/font/google";
 import Header from "~/components/Header";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -20,12 +20,23 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+/**
+ * Display face for the gallery. Geist is a fine interface font but it renders
+ * headings as generic product type; the archive of a ceremony wants something
+ * with warmth in it.
+ */
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${geist.variable} scroll-smooth`}>
+      <html lang="en" className={`${geist.variable} ${fraunces.variable} scroll-smooth`}>
         <body>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Header />
