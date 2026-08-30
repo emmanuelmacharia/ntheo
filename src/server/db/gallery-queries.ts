@@ -57,6 +57,32 @@ export type MediaItem = {
   chapterId: number | null;
 };
 
+export type CuratorMedia = MediaItem & {
+  eventId: number | null;
+  sortOrder: number;
+  visible: boolean;
+};
+
+export type CuratorChapter = {
+  id: number;
+  eventId: number;
+  title: string;
+  visible: boolean;
+  sortOrder: number;
+  coverMediaId: number | null;
+  media: CuratorMedia[];
+};
+
+export type CuratorEvent = {
+  id: number;
+  title: string;
+  visible: boolean;
+  sortOrder: number;
+  coverMediaId: number | null;
+  chapters: CuratorChapter[];
+  unassigned: CuratorMedia[];
+};
+
 const MEDIA_FIELDS = {
   id: media_table.id,
   url: media_table.url,
@@ -81,6 +107,11 @@ const MEDIA_FIELDS = {
  */
 const RENDERABLE = and(
   eq(media_table.visible, true),
+  eq(media_table.metadataStatus, "ok"),
+  sql`${media_table.width} IS NOT NULL AND ${media_table.height} IS NOT NULL`,
+);
+
+const CURATABLE = and(
   eq(media_table.metadataStatus, "ok"),
   sql`${media_table.width} IS NOT NULL AND ${media_table.height} IS NOT NULL`,
 );
@@ -112,14 +143,26 @@ export const GALLERY = {
       .where(RENDERABLE)
       .groupBy(media_table.chapterId);
 
-    const countByChapter = new Map(counts.map((c) => [Number(c.chapterId), Number(c.n)]));
+    const countByChapter = new Map(
+      counts.map((c) => [Number(c.chapterId), Number(c.n)]),
+    );
 
-    const coverIds = nodes.map((n) => n.coverMediaId).filter((id): id is number => id !== null);
+    const coverIds = nodes
+      .map((n) => n.coverMediaId)
+      .filter((id): id is number => id !== null);
     const covers = coverIds.length
       ? await db
           .select(MEDIA_FIELDS)
           .from(media_table)
-          .where(sql`${media_table.id} IN (${sql.join(coverIds.map((id) => sql`${id}`), sql`, `)})`)
+          .where(
+            and(
+              RENDERABLE,
+              sql`${media_table.id} IN (${sql.join(
+                coverIds.map((id) => sql`${id}`),
+                sql`, `,
+              )})`,
+            ),
+          )
       : [];
     const coverById = new Map(covers.map((c) => [Number(c.id), toItem(c)]));
 
@@ -131,7 +174,9 @@ export const GALLERY = {
         slug: event.slug,
         startsAt: event.startsAt,
         endsAt: event.endsAt,
-        cover: event.coverMediaId ? (coverById.get(Number(event.coverMediaId)) ?? null) : null,
+        cover: event.coverMediaId
+          ? (coverById.get(Number(event.coverMediaId)) ?? null)
+          : null,
         itemCount: 0,
         chapters: [],
       }));
@@ -153,7 +198,9 @@ export const GALLERY = {
         startsAt: node.startsAt,
         endsAt: node.endsAt,
         itemCount,
-        cover: node.coverMediaId ? (coverById.get(Number(node.coverMediaId)) ?? null) : null,
+        cover: node.coverMediaId
+          ? (coverById.get(Number(node.coverMediaId)) ?? null)
+          : null,
       });
       parent.itemCount += itemCount;
     }
@@ -192,23 +239,68 @@ export const GALLERY = {
       .where(eq(timeline_table.id, item.chapterId))
       .limit(1);
 
-    return chapter ? { chapter, items: await GALLERY.getChapterMedia(item.chapterId) } : null;
+    return chapter
+      ? { chapter, items: await GALLERY.getChapterMedia(item.chapterId) }
+      : null;
   },
 
   /** Everything, in timeline order. Feeds the play-the-day recap. */
   getAllForPlayback: async function (eventId?: number): Promise<MediaItem[]> {
+    const nodes = await db
+      .select()
+      .from(timeline_table)
+      .where(eq(timeline_table.visible, true))
+      .orderBy(asc(timeline_table.sortOrder), asc(timeline_table.id));
+
+    const visibleEvents = nodes.filter((node) => node.parentId === null);
+    const eventOrder = new Map(
+      visibleEvents.map((event, index) => [Number(event.id), index]),
+    );
+    const chapterOrder = new Map(
+      nodes
+        .filter(
+          (node) =>
+            node.parentId !== null && eventOrder.has(Number(node.parentId)),
+        )
+        .map((chapter, index) => [Number(chapter.id), index]),
+    );
+
     const rows = await db
-      .select(MEDIA_FIELDS)
+      .select({
+        ...MEDIA_FIELDS,
+        eventId: media_table.eventId,
+        sortOrder: media_table.sortOrder,
+      })
       .from(media_table)
-      .where(eventId ? and(RENDERABLE, eq(media_table.eventId, eventId)) : RENDERABLE)
-      // Undated Items last. NULL sorts first in an ascending order, which opened
-      // the recap on the "More Moments" leftovers instead of the start of the day.
-      .orderBy(
-        sql`${media_table.capturedAt} IS NULL`,
-        asc(media_table.capturedAt),
-        asc(media_table.id),
-      );
-    return rows.map(toItem);
+      .where(
+        eventId
+          ? and(RENDERABLE, eq(media_table.eventId, eventId))
+          : RENDERABLE,
+      )
+      .orderBy(asc(media_table.id));
+
+    return rows
+      .filter(
+        (item) =>
+          item.eventId !== null &&
+          eventOrder.has(Number(item.eventId)) &&
+          item.chapterId !== null &&
+          chapterOrder.has(Number(item.chapterId)),
+      )
+      .sort((a, b) => {
+        const eventDelta =
+          (eventOrder.get(Number(a.eventId)) ?? Number.MAX_SAFE_INTEGER) -
+          (eventOrder.get(Number(b.eventId)) ?? Number.MAX_SAFE_INTEGER);
+        if (eventDelta) return eventDelta;
+
+        const chapterDelta =
+          (chapterOrder.get(Number(a.chapterId)) ?? Number.MAX_SAFE_INTEGER) -
+          (chapterOrder.get(Number(b.chapterId)) ?? Number.MAX_SAFE_INTEGER);
+        if (chapterDelta) return chapterDelta;
+        if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+        return Number(a.id) - Number(b.id);
+      })
+      .map(toItem);
   },
 
   /** A short strip of the best frames, for the homepage teaser. */
@@ -236,12 +328,78 @@ export const GALLERY = {
       .orderBy(asc(timeline_table.sortOrder), asc(timeline_table.id));
   },
 
+  /** Complete editable state. Hidden and empty Chapters stay reachable here. */
+  getCurationWorkspace: async function (): Promise<CuratorEvent[]> {
+    const [nodes, rows] = await Promise.all([
+      GALLERY.getTimelineForCurator(),
+      db
+        .select({
+          ...MEDIA_FIELDS,
+          eventId: media_table.eventId,
+          sortOrder: media_table.sortOrder,
+          visible: media_table.visible,
+        })
+        .from(media_table)
+        .where(CURATABLE)
+        .orderBy(asc(media_table.sortOrder), asc(media_table.id)),
+    ]);
+
+    const media = rows.map((row) => ({
+      ...toItem(row),
+      eventId: row.eventId === null ? null : Number(row.eventId),
+      sortOrder: row.sortOrder,
+      visible: row.visible,
+    }));
+
+    const events: CuratorEvent[] = nodes
+      .filter((node) => node.parentId === null)
+      .map((event, eventIndex) => ({
+        id: Number(event.id),
+        title: event.title,
+        visible: event.visible,
+        sortOrder: event.sortOrder,
+        coverMediaId:
+          event.coverMediaId === null ? null : Number(event.coverMediaId),
+        chapters: [],
+        unassigned: media.filter(
+          (item) =>
+            item.chapterId === null &&
+            (item.eventId === Number(event.id) ||
+              (eventIndex === 0 && item.eventId === null)),
+        ),
+      }));
+    const eventById = new Map(events.map((event) => [event.id, event]));
+
+    for (const node of nodes) {
+      if (node.parentId === null) continue;
+      const event = eventById.get(Number(node.parentId));
+      if (!event) continue;
+      event.chapters.push({
+        id: Number(node.id),
+        eventId: Number(node.parentId),
+        title: node.title,
+        visible: node.visible,
+        sortOrder: node.sortOrder,
+        coverMediaId:
+          node.coverMediaId === null ? null : Number(node.coverMediaId),
+        media: media.filter((item) => item.chapterId === Number(node.id)),
+      });
+    }
+
+    return events;
+  },
+
   /** Videos still missing a Poster, which the admin capture page works through. */
   getVideosWithoutPosters: async function (): Promise<DB_MediaType[]> {
     return db
       .select()
       .from(media_table)
-      .where(and(sql`${media_table.type} LIKE 'video/%'`, isNull(media_table.posterUrl)))
+      .where(
+        and(
+          sql`${media_table.type} LIKE 'video/%'`,
+          isNull(media_table.posterUrl),
+        ),
+      )
       .orderBy(asc(media_table.id));
   },
 };

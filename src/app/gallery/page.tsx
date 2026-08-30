@@ -8,22 +8,14 @@ import { Footer } from "~/components/footer";
 
 export const dynamic = "force-dynamic";
 
-/**
- * The cover photograph, chosen by hand. The Cover picker finds a reasonable
- * frame automatically, but the image that opens the archive is an editorial
- * decision, not an algorithmic one.
- */
-const HERO_MEDIA_ID = 3377699720528052;
-
 export default async function GalleryPage() {
-  const [events, hero] = await Promise.all([
-    GALLERY.getTimeline(),
-    GALLERY.getMediaItem(HERO_MEDIA_ID),
-  ]);
+  const events = await GALLERY.getTimeline();
   const total = events.reduce((sum, event) => sum + event.itemCount, 0);
   // Three chapters hold only video, so a Cover can be a video. `stillUrl`
   // resolves those to their Poster, since next/image cannot read a QuickTime.
-  const cover = hero ?? events[0]?.cover;
+  const cover =
+    events[0]?.cover ??
+    events[0]?.chapters.find((chapter) => chapter.cover)?.cover;
   const coverSrc = cover ? stillUrl(cover) : null;
 
   return (
@@ -69,15 +61,15 @@ export default async function GalleryPage() {
             </h1>
 
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <Link
+              <a
                 href="/gallery/play"
                 className="text-burgundy inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white/90"
               >
                 <Play className="h-3.5 w-3.5 fill-current" />
                 Play the day
-              </Link>
+              </a>
               <p className="text-sm text-white/75">
-                {total} photos and videos, in the order they were taken
+                {total} photos and videos, in the order we remember them
               </p>
             </div>
           </div>
@@ -86,7 +78,10 @@ export default async function GalleryPage() {
         {/* The same pattern the site header uses, as a seam rather than a banner. */}
         <div
           className="absolute inset-x-0 bottom-0 h-1.5 opacity-90"
-          style={{ backgroundImage: `url('/african-pattern.png')`, backgroundSize: "220px 220px" }}
+          style={{
+            backgroundImage: `url('/african-pattern.png')`,
+            backgroundSize: "220px 220px",
+          }}
         />
       </section>
 

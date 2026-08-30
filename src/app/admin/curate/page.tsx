@@ -4,15 +4,18 @@ import CuratorClient from "./CuratorClient";
 export const dynamic = "force-dynamic";
 
 export default async function CuratePage() {
-  const events = await GALLERY.getTimeline();
+  const events = await GALLERY.getCurationWorkspace();
 
   return (
     <div>
-      <h1 className="font-display text-foreground text-3xl font-semibold">Curate the day</h1>
-      <p className="text-muted-foreground mt-2 mb-10 max-w-2xl">
-        Chapters were proposed from gaps in capture time, and their names are
-        placeholders. Click a name to rename it, use the arrows to reorder, and the
-        eye to hide one. Nothing here deletes anything.
+      <h1 className="font-display text-foreground text-3xl font-semibold">
+        Curate the day
+      </h1>
+      <p className="text-muted-foreground mt-2 mb-8 max-w-3xl">
+        Shape the gallery and the story here. Create and order chapters, place
+        each media item, choose covers, and decide what is shown or featured.
+        Hidden chapters and media stay in this editor so every change is
+        reversible.
       </p>
       <CuratorClient events={events} />
     </div>

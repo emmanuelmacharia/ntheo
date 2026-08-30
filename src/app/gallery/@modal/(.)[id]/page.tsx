@@ -14,8 +14,11 @@ export default async function InterceptedMediaPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const context = await GALLERY.getChapterFor(Number(id));
+  const mediaId = Number(id);
+  if (!Number.isSafeInteger(mediaId) || mediaId <= 0) return null;
+
+  const context = await GALLERY.getChapterFor(mediaId);
   if (!context) return null;
 
-  return <InterceptedViewer items={context.items} startId={Number(id)} />;
+  return <InterceptedViewer items={context.items} startId={mediaId} />;
 }
